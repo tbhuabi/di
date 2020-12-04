@@ -1,0 +1,35 @@
+{
+  "compilerOptions": {
+    "declaration": true,
+    "target": "es6",
+    "module": "es6",
+    "moduleResolution": "node",
+    "sourceMap": false,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "lib": [
+      "es2018",
+      "dom"
+    ],
+    "noImplicitAny": false,
+    "suppressImplicitAnyIndexErrors": true,
+    "downlevelIteration": true,
+    "esModuleInterop": true,
+    "baseUrl": "./",
+    "outDir": "package/bundles/",
+    "paths": {
+      "@tanbo/di": [
+        "src/public-api.ts"
+      ],
+      "@tanbo/*": [
+        "src/*"
+      ]
+    }
+  },
+  "files": [
+    "node_modules/reflect-metadata/reflect-metadata.d.ts"
+  ],
+  "include": [
+    "src/public-api.ts"
+  ]
+}

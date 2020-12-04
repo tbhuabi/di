@@ -1,0 +1,36 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+    "module": "es2020",
+    "moduleResolution": "node",
+    "sourceMap": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "lib": [
+      "es2018",
+      "dom"
+    ],
+    "noImplicitAny": false,
+    "suppressImplicitAnyIndexErrors": true,
+    "downlevelIteration": true,
+    "esModuleInterop": true,
+    "baseUrl": "./",
+    "outDir": "bundles/",
+    "paths": {
+      "@tanbo/di": [
+        "src/public-api.ts"
+      ],
+      "@tanbo/*": [
+        "src/*"
+      ]
+    },
+  },
+  "files": [
+    "node_modules/reflect-metadata/reflect-metadata.d.ts"
+  ],
+  "include": [
+    "index.ts",
+    "src/",
+    "test/"
+  ]
+}

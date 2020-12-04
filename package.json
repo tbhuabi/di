@@ -1,0 +1,36 @@
+{
+  "name": "@tanbo/di",
+  "version": "0.0.1",
+  "description": "A dependency injection Library",
+  "main": "index.js",
+  "scripts": {
+    "start": "webpack-dev-server",
+    "lint": "eslint ./src --ext .ts",
+    "test": "cross-env env=test jest",
+    "test-c": "cross-env env=test jest --coverage",
+    "build:lib": "rimraf package/bundles && tsc -p tsconfig-build.json",
+    "publish:lib": "npm run build:lib && cd package && npm publish"
+  },
+  "author": "tanbo",
+  "license": "MIT",
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^4.6.1",
+    "@typescript-eslint/parser": "^4.6.1",
+    "babel-jest": "^26.6.1",
+    "cross-env": "^7.0.2",
+    "eslint": "^7.12.1",
+    "eslint-loader": "^4.0.2",
+    "html-webpack-plugin": "^4.5.0",
+    "ip": "^1.1.5",
+    "jest": "^26.4.2",
+    "ts-jest": "^26.4.3",
+    "ts-loader": "^8.0.4",
+    "typescript": "^4.0.3",
+    "webpack": "^4.44.2",
+    "webpack-cli": "^3.3.12",
+    "webpack-dev-server": "^3.11.0"
+  },
+  "dependencies": {
+    "reflect-metadata": "^0.1.13"
+  }
+}

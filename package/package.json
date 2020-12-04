@@ -1,0 +1,23 @@
+{
+  "name": "@tanbo/di",
+  "version": "0.0.1",
+  "description": "A dependency injection Library",
+  "main": "./bundles/public-api.js",
+  "module": "./bundles/public-api.js",
+  "typings": "./bundles/public-api.d.ts",
+  "license": "MIT",
+  "author": {
+    "name": "tanbo",
+    "email": "tanbohb@gmail.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tbhuabi/di.git"
+  },
+  "bugs": {
+    "url": "https://github.com/tbhuabi/di.git/issues"
+  },
+  "peerDependencies": {
+    "reflect-metadata": "^0.1.13"
+  }
+}
