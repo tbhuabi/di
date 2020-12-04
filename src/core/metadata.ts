@@ -57,7 +57,7 @@ export interface OptionalDecorator {
   new(): Optional;
 }
 
-export const Optional: OptionalDecorator = function OptionalDecorator(): ParameterDecorator | PropertyDecorator {
+export const Optional: OptionalDecorator = function OptionalDecorator(): ParameterDecorator {
   if (!(this instanceof Optional)) {
     return makeParamDecorator(Optional);
   }
