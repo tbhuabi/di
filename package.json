@@ -9,7 +9,7 @@
     "test": "cross-env env=test jest",
     "test-c": "cross-env env=test jest --coverage",
     "build:lib": "rimraf package/bundles && tsc -p tsconfig-build.json",
-    "publish:lib": "npm run build:lib && cd package && npm publish"
+    "publish:lib": "npm run build:lib && cd package && npm publish --access public"
   },
   "author": "tanbo",
   "license": "MIT",
