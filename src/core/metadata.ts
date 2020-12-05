@@ -1,4 +1,5 @@
 import { makeParamDecorator } from './decorators';
+import { Type } from './type';
 
 export interface Inject {
   token: any;
@@ -10,7 +11,7 @@ export interface InjectDecorator {
   new(token: any): Inject;
 }
 
-export const Inject: InjectDecorator = function InjectDecorator(token: any): any {
+export const Inject: InjectDecorator = function InjectDecorator(token: any): ParameterDecorator {
   if (this instanceof InjectDecorator) {
     this.token = token
   } else {
@@ -62,3 +63,8 @@ export const Optional: OptionalDecorator = function OptionalDecorator(): Paramet
     return makeParamDecorator(Optional);
   }
 } as OptionalDecorator;
+
+export interface TypeDecorator {
+  <T extends Type<any>>(type: T): T;
+  (target: Object, propertyKey?: string | symbol, parameterIndex?: number): void;
+}
