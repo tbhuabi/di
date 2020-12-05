@@ -6,7 +6,7 @@ export interface Inject {
 }
 
 export interface InjectDecorator {
-  (token: any): any;
+  (token: any): ParameterDecorator;
 
   new(token: any): Inject;
 }
@@ -23,7 +23,7 @@ export interface Self {
 }
 
 export interface SelfDecorator {
-  (): any;
+  (): ParameterDecorator;
 
   new(): Self;
 }
@@ -38,7 +38,7 @@ export interface SkipSelf {
 }
 
 export interface SkipSelfDecorator {
-  (): any;
+  (): ParameterDecorator;
 
   new(): SkipSelf;
 }
@@ -53,7 +53,7 @@ export interface Optional {
 }
 
 export interface OptionalDecorator {
-  (): any;
+  (): ParameterDecorator;
 
   new(): Optional;
 }

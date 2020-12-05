@@ -1,6 +1,6 @@
 {
   "name": "@tanbo/di",
-  "version": "0.0.2",
+  "version": "0.0.4",
   "description": "A dependency injection Library",
   "main": "./bundles/public-api.js",
   "module": "./bundles/public-api.js",

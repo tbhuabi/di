@@ -4,12 +4,12 @@ export interface Injectable {
 }
 
 export interface InjectableDecorator {
-  (): any;
+  (): ClassDecorator;
 
   new(): Injectable;
 }
 
-export const Injectable: InjectableDecorator = function InjectableDecorator(): any {
+export const Injectable: InjectableDecorator = function InjectableDecorator(): ClassDecorator {
   if (!(this instanceof InjectableDecorator)) {
     return makeClassDecorator(Injectable);
   }
