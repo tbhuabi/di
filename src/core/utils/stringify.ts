@@ -11,10 +11,6 @@ export function stringify(token: any): string {
     return '' + token;
   }
 
-  if (token.overriddenName) {
-    return `${token.overriddenName}`;
-  }
-
   if (token.name) {
     return `${token.name}`;
   }
