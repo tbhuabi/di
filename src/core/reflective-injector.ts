@@ -25,7 +25,7 @@ export class ReflectiveInjector extends Injector {
       const {provide, deps, factory} = this.normalizedProviders[i];
       if (provide === token || token instanceof ForwardRef && token.getRef() === provide) {
         const ff = factory(this);
-        const params = this.resolveDeps(deps, notFoundValue);
+        const params = this.resolveDeps(deps || [], notFoundValue);
         const reflectiveValue = ff(...params);
         this.reflectiveValues.set(token, reflectiveValue);
         return reflectiveValue;
