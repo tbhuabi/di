@@ -31,6 +31,9 @@ export class ReflectiveInjector extends Injector {
         return reflectiveValue;
       }
     }
+    if (this.parentInjector) {
+      return this.parentInjector.get(token, notFoundValue);
+    }
     throw reflectiveInjectorErrorFn(token);
   }
 
