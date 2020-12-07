@@ -3,6 +3,7 @@ import { Injector } from './injector';
 import { NormalizedProvider, normalizeProviders, ReflectiveDependency } from './reflective-provider';
 import { Self, SkipSelf } from './metadata';
 import { makeInjectError } from './utils/inject-error';
+import { ForwardRef } from './forward-ref';
 
 const reflectiveInjectorErrorFn = makeInjectError('ReflectiveInjectorError');
 
@@ -21,11 +22,11 @@ export class ReflectiveInjector extends Injector {
       return this.reflectiveValues.get(token);
     }
     for (let i = 0; i < this.normalizedProviders.length; i++) {
-      const provider = this.normalizedProviders[i];
-      if (provider.provide === token) {
-        const factory = provider.factory(this);
-        const params = this.resolveDeps(provider.deps, notFoundValue);
-        const reflectiveValue = factory(...params);
+      const {provide, deps, factory} = this.normalizedProviders[i];
+      if (provide === token || token instanceof ForwardRef && token.getRef() === provide) {
+        const ff = factory(this);
+        const params = this.resolveDeps(deps, notFoundValue);
+        const reflectiveValue = ff(...params);
         this.reflectiveValues.set(token, reflectiveValue);
         return reflectiveValue;
       }

@@ -2,6 +2,7 @@ export * from './core/utils/_api';
 
 export * from './core/annotations';
 export * from './core/decorators';
+export * from './core/forward-ref';
 export * from './core/injectable';
 export * from './core/injection-token';
 export * from './core/injector';

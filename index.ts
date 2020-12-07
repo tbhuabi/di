@@ -1,5 +1,11 @@
 import 'reflect-metadata';
-import { Inject, Injectable, NullInjector, ReflectiveInjector, Self, SkipSelf } from '@tanbo/di';
+import { forwardRef, Inject, Injectable, NullInjector, ReflectiveInjector, Self, SkipSelf } from '@tanbo/di';
+@Injectable()
+class Parent {
+  name = 'parent'
+  constructor(@Inject(forwardRef(() => Child)) public child: Child) {
+  }
+}
 
 @Injectable()
 class Child {
@@ -10,12 +16,7 @@ class Child2 extends Child {
   name = 'child2'
 }
 
-@Injectable()
-class Parent {
-  name = 'parent'
-  constructor(public child: Child, @Inject('test') public d: string, @SkipSelf() @Inject('test') public f: string) {
-  }
-}
+
 
 const injector = new ReflectiveInjector(new NullInjector(), [Parent, {
   provide: Child,
