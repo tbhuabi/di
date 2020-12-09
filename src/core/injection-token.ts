@@ -1,4 +1,4 @@
-export class InjectionToken {
+export class InjectionToken<T> {
   constructor(public readonly token: string) {
   }
 }

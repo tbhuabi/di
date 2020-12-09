@@ -40,7 +40,7 @@ export function makeClassDecorator(token: any, ...params: any[]): ClassDecorator
   }
 }
 
-function getAnnotations(target: any): Annotations {
+export function getAnnotations(target: any): Annotations {
   if (!target.hasOwnProperty('__annotaions__')) {
     const annotations = new Annotations();
     Reflect.defineProperty(target, '__annotations__', {

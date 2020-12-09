@@ -4,6 +4,8 @@ import { NormalizedProvider, normalizeProviders, ReflectiveDependency } from './
 import { Self, SkipSelf } from './metadata';
 import { makeInjectError } from './utils/inject-error';
 import { ForwardRef } from './forward-ref';
+import { Type } from './type';
+import { InjectionToken } from './injection-token';
 
 const reflectiveInjectorErrorFn = makeInjectError('ReflectiveInjectorError');
 
@@ -17,7 +19,7 @@ export class ReflectiveInjector extends Injector {
     this.normalizedProviders = normalizeProviders(staticProviders);
   }
 
-  get<T>(token: any, notFoundValue?: any): T {
+  get<T>(token: Type<T> | InjectionToken<T>, notFoundValue?: T): T {
     if (this.reflectiveValues.has(token)) {
       return this.reflectiveValues.get(token);
     }
