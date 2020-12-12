@@ -92,7 +92,7 @@ function normalizeFactoryProviderFactory(provider: FactoryProvider): NormalizedP
         return provider.useFactory(...args);
       }
     },
-    deps: provider.deps
+    deps: normalizeDeps(provider.deps || [])
   }
 }
 
