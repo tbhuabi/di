@@ -20,7 +20,7 @@ export interface ReflectiveDependency {
 
 export interface NormalizedProvider {
   provide: any,
-  factory: (injector: Injector) => (...args: any[]) => any;
+  factory: (injector: Injector, cacheFn: (token: any, value: any) => void) => (...args: any[]) => any;
   deps: ReflectiveDependency[]
 }
 
@@ -63,9 +63,11 @@ function normalizeClassProviderFactory(provider: ClassProvider): NormalizedProvi
   }
   return {
     provide: provider.provide,
-    factory() {
+    factory(injector, cacheFn) {
       return function (...args: any[]) {
-        return new provider.useClass(...args);
+        const instance = new provider.useClass(...args);
+        cacheFn(provider.useClass, instance);
+        return instance;
       }
     },
     deps
