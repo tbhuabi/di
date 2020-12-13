@@ -30,15 +30,7 @@ export class ReflectiveInjector extends Injector {
           this.reflectiveValues.set(token, value)
         });
         const params = this.resolveDeps(deps || [], notFoundValue);
-        // 有可能在获取依赖参数时，已实例化
-        if (this.reflectiveValues.has(token)) {
-          return this.reflectiveValues.get(token);
-        }
-        let reflectiveValue = this.parentInjector?.get(token, notFoundValue)
-        if (reflectiveValue) {
-          return reflectiveValue;
-        }
-        reflectiveValue = ff(...params);
+        let reflectiveValue = ff(...params);
         this.reflectiveValues.set(token, reflectiveValue);
         return reflectiveValue;
       }
