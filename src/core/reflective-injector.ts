@@ -25,7 +25,7 @@ export class ReflectiveInjector extends Injector {
     }
     for (let i = 0; i < this.normalizedProviders.length; i++) {
       const {provide, deps, factory} = this.normalizedProviders[i];
-      if (provide === token || token instanceof ForwardRef && token.getRef() === provide) {
+      if (provide === token) {
         const ff = factory(this, (token: Type<any>, value: any) => {
           this.reflectiveValues.set(token, value)
         });
@@ -44,19 +44,20 @@ export class ReflectiveInjector extends Injector {
   private resolveDeps(deps: ReflectiveDependency[], notFoundValue): any[] {
     return deps.map(dep => {
       let reflectiveValue;
+      const injectToken = dep.injectKey instanceof ForwardRef ? dep.injectKey.getRef() : dep.injectKey;
       if (dep.visibility instanceof Self) {
-        reflectiveValue = this.get(dep.injectKey);
+        reflectiveValue = this.get(injectToken);
       } else if (dep.visibility instanceof SkipSelf) {
         if (this.parentInjector) {
-          reflectiveValue = this.parentInjector.get(dep.injectKey, notFoundValue);
+          reflectiveValue = this.parentInjector.get(injectToken, notFoundValue);
         } else {
-          throw reflectiveInjectorErrorFn(dep.injectKey);
+          throw reflectiveInjectorErrorFn(injectToken);
         }
       }
-      reflectiveValue = this.get(dep.injectKey) || this.parentInjector?.get(dep.injectKey);
+      reflectiveValue = this.get(injectToken) || this.parentInjector?.get(injectToken);
       if (reflectiveValue === null || typeof reflectiveValue === 'undefined' && !dep.optional) {
         if (!dep.optional) {
-          throw reflectiveInjectorErrorFn(dep.injectKey);
+          throw reflectiveInjectorErrorFn(injectToken);
         } else {
           reflectiveValue = null
         }
