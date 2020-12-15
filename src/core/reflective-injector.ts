@@ -44,11 +44,15 @@ export class ReflectiveInjector extends Injector {
         break;
       }
     }
-    if (reflectiveValue === THROW_IF_NOT_FOUND) {
-      throw reflectiveInjectorErrorFn(token);
-    }
+
     if (reflectiveValue === notFoundValue) {
-      return reflectiveValue;
+      if (flags === InjectFlags.Self && reflectiveValue === THROW_IF_NOT_FOUND) {
+        throw reflectiveInjectorErrorFn(token);
+      }
+      if (this.parentInjector) {
+        return this.parentInjector.get(token, notFoundValue, flags);
+      }
+      throw reflectiveInjectorErrorFn(token);
     }
     if (reflectiveValue === null || typeof reflectiveValue === 'undefined') {
       throw reflectiveInjectorErrorFn(token);

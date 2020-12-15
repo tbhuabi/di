@@ -1,5 +1,13 @@
 import 'reflect-metadata';
-import { forwardRef, Inject, Injectable, InjectFlags, NullInjector, ReflectiveInjector, THROW_IF_NOT_FOUND } from '@tanbo/di';
+import {
+  forwardRef,
+  Inject,
+  Injectable,
+  InjectFlags,
+  NullInjector,
+  ReflectiveInjector,
+  THROW_IF_NOT_FOUND
+} from '@tanbo/di';
 
 @Injectable()
 class Parent {
@@ -33,5 +41,5 @@ console.log(injector.get(Child));
 
 const childInjector = new ReflectiveInjector(injector, [Child])
 
-const instance1 = childInjector.get(Child2, THROW_IF_NOT_FOUND, InjectFlags.Self)
+const instance1 = childInjector.get(Child, THROW_IF_NOT_FOUND, InjectFlags.Self)
 console.log(instance1);
