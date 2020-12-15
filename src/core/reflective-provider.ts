@@ -11,6 +11,7 @@ import { Inject, Optional, Self, SkipSelf } from './metadata';
 import { Annotations } from './annotations';
 import { Injectable } from './injectable';
 import { Type } from './type';
+import { stringify } from './utils/_api';
 
 export interface ReflectiveDependency {
   injectKey: any;
@@ -115,7 +116,7 @@ function normalizeTypeProviderFactory(provider: TypeProvider): NormalizedProvide
 function resolveClassParams(construct: Type<any>) {
   const annotations = (construct as any as { __annotations__: Annotations }).__annotations__;
   if (typeof annotations === 'undefined' || typeof annotations.getClassMetadata(Injectable) === 'undefined') {
-    throw new Error(`class \`${construct.name}\` is not injectable!`);
+    throw new Error(`class/function \`${stringify(construct)}\` is not injectable!`);
   }
 
   const deps = (annotations.getClassMetadata(Injectable).arguments || []).map(i => [i]);
