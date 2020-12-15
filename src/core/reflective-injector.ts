@@ -51,7 +51,10 @@ export class ReflectiveInjector extends Injector {
       return this.parentInjector.get(token, notFoundValue,
         flags === InjectFlags.Optional ? InjectFlags.Optional : InjectFlags.Default);
     }
-    throw reflectiveInjectorErrorFn(token);
+    if (notFoundValue === THROW_IF_NOT_FOUND) {
+      throw reflectiveInjectorErrorFn(token);
+    }
+    return notFoundValue;
   }
 
   private resolveDeps(deps: ReflectiveDependency[], notFoundValue): any[] {
