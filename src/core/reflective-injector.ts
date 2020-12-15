@@ -31,7 +31,6 @@ export class ReflectiveInjector extends Injector {
     if (this.reflectiveValues.has(token)) {
       return this.reflectiveValues.get(token);
     }
-    let reflectiveValue = notFoundValue;
     for (let i = 0; i < this.normalizedProviders.length; i++) {
       const {provide, deps, factory} = this.normalizedProviders[i];
       if (provide === token) {
@@ -39,25 +38,20 @@ export class ReflectiveInjector extends Injector {
           this.reflectiveValues.set(token, value)
         });
         const params = this.resolveDeps(deps || [], notFoundValue);
-        reflectiveValue = ff(...params);
+        let reflectiveValue = ff(...params);
         this.reflectiveValues.set(token, reflectiveValue);
-        break;
+        return reflectiveValue
       }
     }
 
-    if (reflectiveValue === notFoundValue) {
-      if (flags === InjectFlags.Self && reflectiveValue === THROW_IF_NOT_FOUND) {
-        throw reflectiveInjectorErrorFn(token);
-      }
-      if (this.parentInjector) {
-        return this.parentInjector.get(token, notFoundValue, flags);
-      }
+    if (flags === InjectFlags.Self && notFoundValue === THROW_IF_NOT_FOUND) {
       throw reflectiveInjectorErrorFn(token);
     }
-    if (reflectiveValue === null || typeof reflectiveValue === 'undefined') {
-      throw reflectiveInjectorErrorFn(token);
+    if (this.parentInjector) {
+      return this.parentInjector.get(token, notFoundValue,
+        flags === InjectFlags.Optional ? InjectFlags.Optional : InjectFlags.Default);
     }
-    return reflectiveValue;
+    throw reflectiveInjectorErrorFn(token);
   }
 
   private resolveDeps(deps: ReflectiveDependency[], notFoundValue): any[] {

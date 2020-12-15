@@ -39,7 +39,7 @@ const instance = injector.get(Parent);
 // console.log(instance)
 console.log(injector.get(Child));
 
-const childInjector = new ReflectiveInjector(injector, [Child])
+const childInjector = new ReflectiveInjector(injector, [Child, ])
 
-const instance1 = childInjector.get(Child, THROW_IF_NOT_FOUND, InjectFlags.Self)
+const instance1 = childInjector.get(Child)
 console.log(instance1);
