@@ -17,7 +17,13 @@ npm install @tanbo/di reflect-metadata
 import 'reflect-metadata';
 import { forwardRef, Inject, Injectable, ReflectiveInjector, Self, SkipSelf, Optional } from '@tanbo/di';
 ```
-@Injectable() 标记可注入的类
+@Injectable() 该装饰器用于表示此类可以自动注入其依赖项
+@Inject 该装饰器用于注入值类型
+@Self 该装饰器用于在自身查找依赖项，不会向父元素查找
+@SkipSelf 该装饰器用于跳过自身，在父元素查找依赖项
+@Optional 该装饰器将依赖项视为可选依赖，在运行解析时，找不到依赖项是会解析为null,而不会抛出异常
+@forwardRef 该装饰器是一个向前引用，可以先使用后定义的依赖项
+
 
 ```typescript
 @Injectable()
@@ -34,10 +40,11 @@ class Parent {
   }
 }
 
+/**ReflectiveInjector的第一个参数为父注入器，默认为null*/
 const injector = new ReflectiveInjector(null, [Parent, Child])
 const instance = injector.get(Parent);
+instance为获取到的实例
 ```
-ReflectiveInjector的第一个参数为父注入器
 
 
 
