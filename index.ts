@@ -11,7 +11,7 @@ let i = 0
 @Injectable()
 class Child {
   @Prop(Parent)
-  name = 'child'
+  parent: Parent;
 
   index: number
   constructor() {
