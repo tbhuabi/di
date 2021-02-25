@@ -8,10 +8,10 @@ import {
 } from './provider';
 import { Injector } from './injector';
 import { Inject, Optional, Self, SkipSelf } from './metadata';
-import { Annotations } from './annotations';
 import { Injectable } from './injectable';
 import { Type } from './type';
 import { stringify } from './utils/_api';
+import { getAnnotations } from './decorators';
 
 export interface ReflectiveDependency {
   injectKey: any;
@@ -114,7 +114,7 @@ function normalizeTypeProviderFactory(provider: TypeProvider): NormalizedProvide
 }
 
 function resolveClassParams(construct: Type<any>) {
-  const annotations = (construct as any as { __annotations__: Annotations }).__annotations__;
+  const annotations = getAnnotations(construct);
   if (typeof annotations === 'undefined' || typeof annotations.getClassMetadata(Injectable) === 'undefined') {
     throw new Error(`class/function \`${stringify(construct)}\` is not injectable!`);
   }
