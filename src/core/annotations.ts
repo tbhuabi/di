@@ -16,7 +16,6 @@ export interface PropertyDecoratorContextCallback {
 
 export interface PropertyAnnotation {
   propertyKey: string | Symbol;
-  params: any[];
   contextCallback: PropertyDecoratorContextCallback;
 }
 

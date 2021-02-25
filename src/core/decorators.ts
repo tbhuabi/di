@@ -10,12 +10,11 @@ export function makeParamDecorator(token: any, ...params: any[]): ParameterDecor
   }
 }
 
-export function makePropertyDecorator(token: any, contextCallback: PropertyDecoratorContextCallback, ...params: any[]): PropertyDecorator {
+export function makePropertyDecorator(token: any, contextCallback: PropertyDecoratorContextCallback): PropertyDecorator {
   return function (target, propertyKey) {
     const annotations = getAnnotations(target.constructor);
     annotations.pushPropMetadata(token, {
       propertyKey,
-      params,
       contextCallback
     });
   }

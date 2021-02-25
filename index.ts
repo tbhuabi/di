@@ -1,17 +1,18 @@
 import 'reflect-metadata';
-import { forwardRef, Inject, Injectable, InjectFlags, ReflectiveInjector } from '@tanbo/di';
+import { forwardRef, Inject, Injectable, InjectFlags, Prop, ReflectiveInjector } from '@tanbo/di';
 
 @Injectable()
 class Parent {
   name = 'parent'
-  constructor(@Inject(forwardRef(() => Child)) public child: Child) {
-  }
+
 }
 let i = 0
 
 @Injectable()
 class Child {
+  @Prop(Parent)
   name = 'child'
+
   index: number
   constructor() {
     this.index= i;
@@ -25,13 +26,7 @@ class Child2 extends Child {
 
 
 
-const injector = new ReflectiveInjector(null, [Parent, Child])
+const injector = new ReflectiveInjector(null, [Child, Parent])
 
-const instance = injector.get(Parent);
-// console.log(instance)
-console.log(injector.get(Child2, null));
-
-const childInjector = new ReflectiveInjector(injector, [Child, Child2])
-
-const instance1 = childInjector.get(Child2, 3 as any, InjectFlags.SkipSelf)
-console.log(instance1);
+const instance = injector.get(Child);
+console.log(instance)
