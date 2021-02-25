@@ -32,13 +32,13 @@ export class ReflectiveInjector extends Injector {
       return this.reflectiveValues.get(token);
     }
     for (let i = 0; i < this.normalizedProviders.length; i++) {
-      const {provide, deps, factory} = this.normalizedProviders[i];
+      const {provide, deps, generateFactory} = this.normalizedProviders[i];
       if (provide === token) {
-        const ff = factory(this, (token: Type<any>, value: any) => {
+        const factory = generateFactory(this, (token: Type<any>, value: any) => {
           this.reflectiveValues.set(token, value)
         });
         const params = this.resolveDeps(deps || [], notFoundValue);
-        let reflectiveValue = ff(...params);
+        let reflectiveValue = factory(...params);
         this.reflectiveValues.set(token, reflectiveValue);
         return reflectiveValue
       }

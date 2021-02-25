@@ -21,24 +21,24 @@ export interface ReflectiveDependency {
 
 export interface NormalizedProvider {
   provide: any,
-  factory: (injector: Injector, cacheFn: (token: any, value: any) => void) => (...args: any[]) => any;
+  generateFactory: (injector: Injector, cacheFn: (token: any, value: any) => void) => (...args: any[]) => any;
   deps: ReflectiveDependency[]
 }
 
 export function normalizeProviders(providers: Provider[]): NormalizedProvider[] {
-  return providers.map(item => {
-    if ((item as ValueProvider).useValue) {
-      return normalizeValueProviderFactory(item as ValueProvider);
-    } else if ((item as ClassProvider).useClass) {
-      return normalizeClassProviderFactory(item as ClassProvider);
-    } else if ((item as ExistingProvider).useExisting) {
-      return normalizeExistingProviderFactory(item as ExistingProvider);
-    } else if ((item as FactoryProvider).useFactory) {
-      return normalizeFactoryProviderFactory(item as FactoryProvider);
-    } else if ((item as ConstructorProvider).provide) {
-      return normalizeConstructorProviderFactory(item as ConstructorProvider);
+  return providers.map(provider => {
+    if ((provider as ValueProvider).useValue) {
+      return normalizeValueProviderFactory(provider as ValueProvider);
+    } else if ((provider as ClassProvider).useClass) {
+      return normalizeClassProviderFactory(provider as ClassProvider);
+    } else if ((provider as ExistingProvider).useExisting) {
+      return normalizeExistingProviderFactory(provider as ExistingProvider);
+    } else if ((provider as FactoryProvider).useFactory) {
+      return normalizeFactoryProviderFactory(provider as FactoryProvider);
+    } else if ((provider as ConstructorProvider).provide) {
+      return normalizeConstructorProviderFactory(provider as ConstructorProvider);
     } else {
-      return normalizeTypeProviderFactory(item as TypeProvider);
+      return normalizeTypeProviderFactory(provider as TypeProvider);
     }
   })
 }
@@ -46,7 +46,7 @@ export function normalizeProviders(providers: Provider[]): NormalizedProvider[] 
 function normalizeValueProviderFactory(provider: ValueProvider): NormalizedProvider {
   return {
     provide: provider.provide,
-    factory() {
+    generateFactory() {
       return function () {
         return provider.useValue
       }
@@ -64,7 +64,7 @@ function normalizeClassProviderFactory(provider: ClassProvider): NormalizedProvi
   }
   return {
     provide: provider.provide,
-    factory(injector, cacheFn) {
+    generateFactory(injector, cacheFn) {
       return function (...args: any[]) {
         const instance = new provider.useClass(...args);
         cacheFn(provider.useClass, instance);
@@ -78,7 +78,7 @@ function normalizeClassProviderFactory(provider: ClassProvider): NormalizedProvi
 function normalizeExistingProviderFactory(provider: ExistingProvider): NormalizedProvider {
   return {
     provide: provider.provide,
-    factory(injector: Injector) {
+    generateFactory(injector: Injector) {
       return function () {
         return injector.get(provider.useExisting)
       }
@@ -90,7 +90,7 @@ function normalizeExistingProviderFactory(provider: ExistingProvider): Normalize
 function normalizeFactoryProviderFactory(provider: FactoryProvider): NormalizedProvider {
   return {
     provide: provider.provide,
-    factory() {
+    generateFactory() {
       return function (...args: any[]) {
         return provider.useFactory(...args);
       }
