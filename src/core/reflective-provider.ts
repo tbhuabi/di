@@ -64,14 +64,21 @@ function normalizeClassProviderFactory(provider: ClassProvider): NormalizedProvi
   }
   return {
     provide: provider.provide,
+    deps,
     generateFactory(injector, cacheFn) {
       return function (...args: any[]) {
         const instance = new provider.useClass(...args);
+        const propMetadataKeys = getAnnotations(provider.useClass).getPropMetadataKeys();
+        propMetadataKeys.forEach(key => {
+          const propsMetadata = getAnnotations(provider.useClass).getPropMetadata(key) || [];
+          propsMetadata.forEach(item => {
+            item.contextCallback(instance, item.propertyKey, injector);
+          })
+        })
         cacheFn(provider.useClass, instance);
         return instance;
       }
-    },
-    deps
+    }
   }
 }
 

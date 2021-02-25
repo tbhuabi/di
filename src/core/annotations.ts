@@ -1,3 +1,5 @@
+import { Injector } from './injector';
+
 export interface ConstructAnnotation {
   arguments: any[];
   params: any[];
@@ -8,9 +10,14 @@ export interface ParamAnnotation {
   params: any[];
 }
 
+export interface PropertyDecoratorContextCallback {
+  (instance: any, propertyName: string | Symbol, injector: Injector): void;
+}
+
 export interface PropertyAnnotation {
   propertyKey: string | Symbol;
   params: any[];
+  contextCallback: PropertyDecoratorContextCallback;
 }
 
 export interface MethodAnnotation {
@@ -42,6 +49,10 @@ export class Annotations {
 
   getParamMetadata(token: any) {
     return this.params.get(token);
+  }
+
+  getPropMetadataKeys() {
+    return Array.from(this.props.keys());
   }
 
   pushPropMetadata(token: any, params: PropertyAnnotation) {
