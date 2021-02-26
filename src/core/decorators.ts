@@ -30,11 +30,12 @@ export function makeMethodDecorator(token: any, ...params: any[]): MethodDecorat
   }
 }
 
-export function makeClassDecorator(token: any, contextCallback: ClassDecoratorContextCallback): ClassDecorator {
+export function makeClassDecorator(token: any, contextCallback?: ClassDecoratorContextCallback, ...args: any[]): ClassDecorator {
   return function (target) {
     const annotations = getAnnotations(target);
-    annotations.pushClassMetadata(token, {
+    annotations.setClassMetadata(token, {
       params: Reflect.getMetadata('design:paramtypes', target),
+      decoratorArguments: args,
       contextCallback
     });
   }

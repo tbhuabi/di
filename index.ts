@@ -1,7 +1,6 @@
 import 'reflect-metadata';
 import { forwardRef, Inject, Injectable, InjectFlags, Prop, ReflectiveInjector } from '@tanbo/di';
 
-@Injectable()
 class Parent {
   name = 'parent'
 
@@ -10,11 +9,9 @@ let i = 0
 
 @Injectable()
 class Child {
-  @Prop(Parent)
-  parent: Parent;
 
   index: number
-  constructor() {
+  constructor(@Inject(Parent)private parent: Parent) {
     this.index= i;
     i++
   }

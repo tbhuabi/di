@@ -127,7 +127,7 @@ function resolveClassParams(construct: Type<any>) {
   }
   return classMetadataKeys.reduce((deps: [], key) => {
     const annotation = annotations.getClassMetadata(key);
-    return annotation.contextCallback(annotation.params, annotations, construct) || deps;
+    return annotation.contextCallback?.(annotation.params, annotations, construct) || deps;
   }, [])
 }
 
