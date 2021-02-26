@@ -8,10 +8,9 @@ import {
 } from './provider';
 import { Injector } from './injector';
 import { Inject, Optional, Self, SkipSelf } from './metadata';
-import { Injectable } from './injectable';
 import { Type } from './type';
-import { stringify } from './utils/_api';
 import { getAnnotations } from './decorators';
+import { stringify } from './utils/stringify';
 
 export interface ReflectiveDependency {
   injectKey: any;
@@ -122,24 +121,14 @@ function normalizeTypeProviderFactory(provider: TypeProvider): NormalizedProvide
 
 function resolveClassParams(construct: Type<any>) {
   const annotations = getAnnotations(construct);
-  if (typeof annotations === 'undefined' || typeof annotations.getClassMetadata(Injectable) === 'undefined') {
-    throw new Error(`class/function \`${stringify(construct)}\` is not injectable!`);
+  const classMetadataKeys = annotations.getClassMetadataKeys();
+  if (classMetadataKeys.length === 0) {
+    throw new Error(`class \`${stringify(construct)}\` not find ClassDecorator!`);
   }
-
-  const deps = (annotations.getClassMetadata(Injectable).arguments || []).map(i => [i]);
-  (annotations.getParamMetadata(Inject) || []).forEach(item => {
-    deps[item.parameterIndex].push(item.params[0].token);
-  });
-  (annotations.getParamMetadata(Self) || []).map(item => {
-    deps[item.parameterIndex].push(new Self());
-  });
-  (annotations.getParamMetadata(SkipSelf) || []).map(item => {
-    deps[item.parameterIndex].push(new SkipSelf());
-  });
-  (annotations.getParamMetadata(Optional) || []).forEach(item => {
-    deps[item.parameterIndex].push(new Optional());
-  })
-  return deps;
+  return classMetadataKeys.reduce((deps: [], key) => {
+    const annotation = annotations.getClassMetadata(key);
+    return annotation.contextCallback(annotation.params, annotations, construct) || deps;
+  }, [])
 }
 
 function normalizeDeps(deps: any[]): ReflectiveDependency[] {

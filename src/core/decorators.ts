@@ -1,4 +1,4 @@
-import { Annotations, PropertyDecoratorContextCallback } from './annotations';
+import { Annotations, ClassDecoratorContextCallback, PropertyDecoratorContextCallback } from './annotations';
 
 export function makeParamDecorator(token: any, ...params: any[]): ParameterDecorator {
   return function (target, propertyKey, parameterIndex) {
@@ -30,12 +30,12 @@ export function makeMethodDecorator(token: any, ...params: any[]): MethodDecorat
   }
 }
 
-export function makeClassDecorator(token: any, ...params: any[]): ClassDecorator {
+export function makeClassDecorator(token: any, contextCallback: ClassDecoratorContextCallback): ClassDecorator {
   return function (target) {
     const annotations = getAnnotations(target);
     annotations.pushClassMetadata(token, {
-      arguments: Reflect.getMetadata('design:paramtypes', target),
-      params
+      params: Reflect.getMetadata('design:paramtypes', target),
+      contextCallback
     });
   }
 }

@@ -1,8 +1,13 @@
 import { Injector } from './injector';
+import { Type } from './type';
 
-export interface ConstructAnnotation {
-  arguments: any[];
+export interface ClassDecoratorContextCallback {
+  (params: any[], annotations: Annotations, constructor: Type<any>): any[]; // return dependency declaration
+}
+
+export interface ClassAnnotation {
   params: any[];
+  contextCallback: ClassDecoratorContextCallback;
 }
 
 export interface ParamAnnotation {
@@ -25,17 +30,21 @@ export interface MethodAnnotation {
 }
 
 export class Annotations {
-  private classes = new Map<any, ConstructAnnotation>();
+  private classes = new Map<any, ClassAnnotation>();
   private props = new Map<any, PropertyAnnotation[]>();
   private methods = new Map<any, MethodAnnotation[]>();
   private params = new Map<any, ParamAnnotation[]>();
 
-  pushClassMetadata(token: any, params: ConstructAnnotation) {
+  pushClassMetadata(token: any, params: ClassAnnotation) {
     this.classes.set(token, params);
   }
 
   getClassMetadata(token: any) {
     return this.classes.get(token);
+  }
+
+  getClassMetadataKeys() {
+    return Array.from(this.classes.keys());
   }
 
   pushParamMetadata(token: any, params: ParamAnnotation) {
