@@ -2,7 +2,7 @@ import { Annotations, PropertyDecoratorContextCallback } from './annotations';
 
 export function makeParamDecorator(token: any, ...params: any[]): ParameterDecorator {
   return function (target, propertyKey, parameterIndex) {
-    const annotations = getAnnotations(target.constructor);
+    const annotations = getAnnotations(target);
     annotations.pushParamMetadata(token, {
       parameterIndex,
       params
