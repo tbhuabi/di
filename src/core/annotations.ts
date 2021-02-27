@@ -13,7 +13,7 @@ export interface ClassAnnotation {
 
 export interface ParamAnnotation {
   parameterIndex: number;
-  params: any[];
+  decoratorArguments: any[];
 }
 
 export interface PropertyDecoratorContextCallback {

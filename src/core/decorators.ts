@@ -5,7 +5,7 @@ export function makeParamDecorator(token: any, ...params: any[]): ParameterDecor
     const annotations = getAnnotations(target);
     annotations.pushParamMetadata(token, {
       parameterIndex,
-      params
+      decoratorArguments: params
     });
   }
 }
