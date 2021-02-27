@@ -19,7 +19,14 @@ export const Inject: InjectDecorator = function InjectDecorator(token: any): Par
   if (this instanceof InjectDecorator) {
     this.token = token
   } else {
-    return makeParamDecorator(Inject, new Inject(token));
+    return makeParamDecorator(Inject, {
+      metadataGenerator() {
+        return new Inject(token);
+      },
+      reflectiveController(dep) {
+        dep.injectKey = token instanceof ForwardRef ? token.getRef() : token;
+      }
+    });
   }
 } as InjectDecorator
 
@@ -34,7 +41,14 @@ export interface SelfDecorator {
 
 export const Self: SelfDecorator = function SelfDecorator(): ParameterDecorator {
   if (!(this instanceof Self)) {
-    return makeParamDecorator(Self);
+    return makeParamDecorator(Self, {
+      metadataGenerator() {
+        return new Self()
+      },
+      reflectiveController(dep) {
+        dep.visibility = Self;
+      }
+    });
   }
 } as SelfDecorator;
 
@@ -49,7 +63,14 @@ export interface SkipSelfDecorator {
 
 export const SkipSelf: SkipSelfDecorator = function SkipSelfDecorator(): ParameterDecorator {
   if (!(this instanceof SkipSelf)) {
-    return makeParamDecorator(SkipSelf);
+    return makeParamDecorator(SkipSelf, {
+      metadataGenerator() {
+        return new SkipSelf()
+      },
+      reflectiveController(dep) {
+        dep.visibility = SkipSelf;
+      }
+    });
   }
 } as SkipSelfDecorator;
 
@@ -64,7 +85,14 @@ export interface OptionalDecorator {
 
 export const Optional: OptionalDecorator = function OptionalDecorator(): ParameterDecorator {
   if (!(this instanceof Optional)) {
-    return makeParamDecorator(Optional);
+    return makeParamDecorator(Optional, {
+      metadataGenerator() {
+        return new Optional()
+      },
+      reflectiveController(dep) {
+        dep.visibility = Optional;
+      }
+    });
   }
 } as OptionalDecorator;
 

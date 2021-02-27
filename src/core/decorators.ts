@@ -1,10 +1,16 @@
-import { Annotations, ClassDecoratorContextCallback, PropertyDecoratorContextCallback } from './annotations';
+import {
+  Annotations,
+  ClassDecoratorContextCallback,
+  ParamDecoratorConfig,
+  PropertyDecoratorContextCallback
+} from './annotations';
 
-export function makeParamDecorator(token: any, ...params: any[]): ParameterDecorator {
+export function makeParamDecorator(token: any, config: ParamDecoratorConfig, ...params: any[]): ParameterDecorator {
   return function (target, propertyKey, parameterIndex) {
     const annotations = getAnnotations(target);
     annotations.pushParamMetadata(token, {
       parameterIndex,
+      config,
       decoratorArguments: params
     });
   }
