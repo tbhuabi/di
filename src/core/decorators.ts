@@ -34,7 +34,7 @@ export function makeClassDecorator(token: any, contextCallback?: ClassDecoratorC
   return function (target) {
     const annotations = getAnnotations(target);
     annotations.setClassMetadata(token, {
-      params: Reflect.getMetadata('design:paramtypes', target),
+      paramTypes: Reflect.getMetadata('design:paramtypes', target),
       decoratorArguments: args,
       contextCallback
     });

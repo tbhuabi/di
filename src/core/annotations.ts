@@ -2,11 +2,11 @@ import { Injector } from './injector';
 import { Type } from './type';
 
 export interface ClassDecoratorContextCallback {
-  (params: any[], annotations: Annotations, constructor: Type<any>): any[] | void; // return dependency declaration
+  (paramsTypes: any[], annotations: Annotations, constructor: Type<any>): any[] | void; // return dependency declaration
 }
 
 export interface ClassAnnotation {
-  params: any[];
+  paramTypes: any[];
   decoratorArguments: any[];
   contextCallback: ClassDecoratorContextCallback;
 }

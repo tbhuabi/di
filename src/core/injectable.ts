@@ -18,7 +18,7 @@ export const Injectable: InjectableDecorator = function InjectableDecorator(): C
       if (typeof metadata === 'undefined') {
         throw new Error(`class/function \`${stringify(construct)}\` is not injectable!`);
       }
-      const deps = (metadata.params || []).map(i => [i]);
+      const deps = (metadata.paramTypes || []).map(i => [i]);
       (annotations.getParamMetadata(Inject) || []).forEach(item => {
         deps[item.parameterIndex].push(item.params[0].token);
       });
