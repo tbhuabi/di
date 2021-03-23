@@ -156,7 +156,7 @@ function normalizeDeps(provide: any, deps: any[]): ReflectiveDependency[] {
     }
     if (typeof r.injectKey === 'undefined') {
       throw new Error(`the ${index} th dependent parameter type of \`${stringify(provide)}\` was not obtained,
-if the dependency is declared later, you can refer to it using forwardref\`constructor(@Inject(forwardRef(() => [Type])) paramName: [Type]) {}\``);
+if the dependency is declared later, you can refer to it using \`constructor(@Inject(forwardRef(() => [Type])) paramName: [Type]) {}\``);
     }
     return r;
   })
