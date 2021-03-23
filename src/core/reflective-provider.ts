@@ -57,9 +57,9 @@ function normalizeValueProviderFactory(provider: ValueProvider): NormalizedProvi
 function normalizeClassProviderFactory(provider: ClassProvider): NormalizedProvider {
   let deps: ReflectiveDependency[]
   if (provider.deps) {
-    deps = normalizeDeps(provider.deps);
+    deps = normalizeDeps(provider.provide, provider.deps);
   } else {
-    deps = normalizeDeps(resolveClassParams(provider.useClass));
+    deps = normalizeDeps(provider.provide, resolveClassParams(provider.useClass));
   }
   return {
     provide: provider.provide,
@@ -101,7 +101,7 @@ function normalizeFactoryProviderFactory(provider: FactoryProvider): NormalizedP
         return provider.useFactory(...args);
       }
     },
-    deps: normalizeDeps(provider.deps || [])
+    deps: normalizeDeps(provider.provide, provider.deps || [])
   }
 }
 
@@ -131,8 +131,8 @@ function resolveClassParams(construct: Type<any>) {
   }, [])
 }
 
-function normalizeDeps(deps: any[]): ReflectiveDependency[] {
-  return deps.map(dep => {
+function normalizeDeps(provide: any, deps: any[]): ReflectiveDependency[] {
+  return deps.map((dep, index) => {
     const r: ReflectiveDependency = {
       injectKey: null,
       optional: false,
@@ -153,6 +153,10 @@ function normalizeDeps(deps: any[]): ReflectiveDependency[] {
           r.injectKey = item;
         }
       }
+    }
+    if (typeof r.injectKey === 'undefined') {
+      throw new Error(`the ${index} th dependent parameter type of ${stringify(provide)} was not obtained,
+if the dependency is declared later, you can refer to it using forwardref\`constructor(@Inject(forwardRef(() => injectToken)) paramName: Type) {}\``);
     }
     return r;
   })

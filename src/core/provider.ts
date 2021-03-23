@@ -1,35 +1,35 @@
 import { Type } from './type';
 
-export interface ClassProvider {
+export interface ClassProvider<T = any> {
   provide: any;
-  useClass: Type<any>;
+  useClass: Type<T>;
   deps?: any[];
 }
 
-export interface FactoryProvider {
+export interface FactoryProvider<T = any> {
   provide: any;
-  useFactory: (...args: any[]) => any;
+  useFactory: (...args: any[]) => T;
   deps?: any[];
 }
 
-export interface ValueProvider {
+export interface ValueProvider<T = any> {
   provide: any;
-  useValue: any;
+  useValue: T;
 }
 
-export interface ExistingProvider {
+export interface ExistingProvider<T = any> {
   provide: any;
-  useExisting: any;
+  useExisting: T;
 }
 
-export interface ConstructorProvider {
-  provide: Type<any>;
+export interface ConstructorProvider<T = any> {
+  provide: Type<T>;
   deps?: [];
 }
 
-export interface TypeProvider extends Type<any> {
+export interface TypeProvider<T = any> extends Type<T> {
 }
 
-export type StaticProvider = ClassProvider | FactoryProvider | ValueProvider | ExistingProvider | ConstructorProvider;
+export type StaticProvider<T = any> = ClassProvider<T> | FactoryProvider<T> | ValueProvider<T> | ExistingProvider<T> | ConstructorProvider<T>;
 
-export type Provider = TypeProvider | ValueProvider | ClassProvider | ConstructorProvider | ExistingProvider | FactoryProvider
+export type Provider<T = any> = TypeProvider<T> | ValueProvider<T> | ClassProvider<T> | ConstructorProvider<T> | ExistingProvider<T> | FactoryProvider<T>
