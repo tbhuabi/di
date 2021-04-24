@@ -60,19 +60,20 @@ export class ReflectiveInjector extends Injector {
   private resolveDeps(deps: ReflectiveDependency[], notFoundValue): any[] {
     return deps.map(dep => {
       let reflectiveValue;
+      const tryValue = {};
       const injectToken = dep.injectKey instanceof ForwardRef ? dep.injectKey.getRef() : dep.injectKey;
       if (dep.visibility instanceof Self) {
-        reflectiveValue = this.get(injectToken, notFoundValue, InjectFlags.Self);
+        reflectiveValue = this.get(injectToken, tryValue, InjectFlags.Self);
       } else if (dep.visibility instanceof SkipSelf) {
         if (this.parentInjector) {
-          reflectiveValue = this.parentInjector.get(injectToken, notFoundValue, InjectFlags.Default);
+          reflectiveValue = this.parentInjector.get(injectToken, tryValue, InjectFlags.Default);
         } else {
           throw reflectiveInjectorErrorFn(injectToken);
         }
       } else {
-        reflectiveValue = this.get(injectToken) || this.parentInjector?.get(injectToken);
+        reflectiveValue = this.get(injectToken, tryValue) || this.parentInjector?.get(injectToken, tryValue);
       }
-      if (reflectiveValue === THROW_IF_NOT_FOUND) {
+      if (reflectiveValue === tryValue) {
         if (dep.optional) {
           return notFoundValue;
         }
