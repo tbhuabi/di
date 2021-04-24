@@ -75,6 +75,9 @@ export class ReflectiveInjector extends Injector {
       }
       if (reflectiveValue === tryValue) {
         if (dep.optional) {
+          if (notFoundValue === THROW_IF_NOT_FOUND) {
+            return null;
+          }
           return notFoundValue;
         }
         throw reflectiveInjectorErrorFn(injectToken);
