@@ -15,6 +15,10 @@ export function stringify(token: any): string {
     return `${token.name}`;
   }
 
+  if (token.token) {
+    return `${token.token}`;
+  }
+
   const res = token.toString();
 
   if (res == null) {
