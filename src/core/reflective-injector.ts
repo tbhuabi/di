@@ -38,14 +38,17 @@ export class ReflectiveInjector extends Injector {
           this.reflectiveValues.set(token, value)
         });
         const params = this.resolveDeps(deps || [], notFoundValue);
-        let reflectiveValue = factory(...params);
+        const reflectiveValue = factory(...params);
         this.reflectiveValues.set(token, reflectiveValue);
         return reflectiveValue
       }
     }
 
-    if (flags === InjectFlags.Self && notFoundValue === THROW_IF_NOT_FOUND) {
-      throw reflectiveInjectorErrorFn(token);
+    if (flags === InjectFlags.Self) {
+      if (notFoundValue === THROW_IF_NOT_FOUND) {
+        throw reflectiveInjectorErrorFn(token);
+      }
+      return notFoundValue
     }
     if (this.parentInjector) {
       return this.parentInjector.get(token, notFoundValue,
@@ -66,8 +69,13 @@ export class ReflectiveInjector extends Injector {
         reflectiveValue = this.get(injectToken, tryValue, InjectFlags.Self);
       } else if (dep.visibility instanceof SkipSelf) {
         if (this.parentInjector) {
-          reflectiveValue = this.parentInjector.get(injectToken, tryValue, InjectFlags.Default);
+          reflectiveValue = this.parentInjector.get(injectToken, tryValue, dep.optional ? InjectFlags.Optional : InjectFlags.Default);
         } else {
+          if (dep.optional) {
+            if (notFoundValue === THROW_IF_NOT_FOUND) {
+              return null;
+            }
+          }
           throw reflectiveInjectorErrorFn(injectToken);
         }
       } else {
