@@ -1,6 +1,6 @@
 import { Injector } from './injector';
 import { Type } from './type';
-import { ReflectiveDependency } from '@tanbo/core/reflective-provider';
+import { ReflectiveDependency } from './reflective-provider';
 
 export interface ClassDecoratorContextCallback {
   (paramsTypes: any[], annotations: Annotations, constructor: Type<any>): any[] | void; // return dependency declaration
