@@ -158,6 +158,25 @@ describe('Provide', () => {
     expect(injector.get(B).a === injector.get(A)).toBeTruthy()
   })
 
+  test('改变指向', () => {
+    @Injectable()
+    class A {
+    }
+
+    @Injectable()
+    class Test{
+
+    }
+    @Injectable()
+    class B {
+      constructor(@Inject(Test) public a: A) {
+      }
+    }
+
+    const injector = new ReflectiveInjector(null, [A, B, Test])
+    expect(injector.get(B).a instanceof Test).toBeTruthy()
+  })
+
   test('属性注入', () => {
     @Injectable()
     class A {

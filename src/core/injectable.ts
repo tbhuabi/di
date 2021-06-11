@@ -20,7 +20,7 @@ export const Injectable: InjectableDecorator = function InjectableDecorator(): C
       }
       const deps = (metadata.paramTypes || []).map(i => [i]);
       (annotations.getParamMetadata(Inject) || []).forEach(item => {
-        deps[item.parameterIndex].push(item.decoratorArguments[0].token);
+        deps[item.parameterIndex].push(item.config.metadataGenerator());
       });
       (annotations.getParamMetadata(Self) || []).map(item => {
         deps[item.parameterIndex].push(new Self());

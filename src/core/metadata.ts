@@ -26,7 +26,7 @@ export const Inject: InjectDecorator = function InjectDecorator(token: any): Par
       reflectiveController(dep) {
         dep.injectKey = token instanceof ForwardRef ? token.getRef() : token;
       }
-    });
+    }, token);
   }
 } as InjectDecorator
 
