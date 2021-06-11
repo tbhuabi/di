@@ -2,10 +2,10 @@ import { Type } from './type';
 import { InjectionToken } from './injection-token';
 
 export enum InjectFlags {
-  Default,
-  Self,
-  SkipSelf,
-  Optional
+  Default = 'Default',
+  Self = 'Self',
+  SkipSelf = 'SkipSelf',
+  Optional = 'Optional'
 }
 
 export abstract class Injector {

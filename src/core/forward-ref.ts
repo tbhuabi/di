@@ -1,5 +1,5 @@
-export class ForwardRef {
-  constructor(private forwardRefFn: () => any) {
+export class ForwardRef<T = any> {
+  constructor(private forwardRefFn: () => T) {
   }
 
   getRef() {
@@ -7,6 +7,6 @@ export class ForwardRef {
   }
 }
 
-export function forwardRef(fn: () => any) {
-  return new ForwardRef(fn);
+export function forwardRef<T>(fn: () => T) {
+  return new ForwardRef<T>(fn);
 }

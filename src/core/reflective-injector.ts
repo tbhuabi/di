@@ -38,14 +38,17 @@ export class ReflectiveInjector extends Injector {
           this.reflectiveValues.set(token, value)
         });
         const params = this.resolveDeps(deps || [], notFoundValue);
-        let reflectiveValue = factory(...params);
+        const reflectiveValue = factory(...params);
         this.reflectiveValues.set(token, reflectiveValue);
         return reflectiveValue
       }
     }
 
-    if (flags === InjectFlags.Self && notFoundValue === THROW_IF_NOT_FOUND) {
-      throw reflectiveInjectorErrorFn(token);
+    if (flags === InjectFlags.Self) {
+      if (notFoundValue === THROW_IF_NOT_FOUND) {
+        throw reflectiveInjectorErrorFn(token);
+      }
+      return notFoundValue
     }
     if (this.parentInjector) {
       return this.parentInjector.get(token, notFoundValue,
@@ -60,20 +63,29 @@ export class ReflectiveInjector extends Injector {
   private resolveDeps(deps: ReflectiveDependency[], notFoundValue): any[] {
     return deps.map(dep => {
       let reflectiveValue;
+      const tryValue = {};
       const injectToken = dep.injectKey instanceof ForwardRef ? dep.injectKey.getRef() : dep.injectKey;
       if (dep.visibility instanceof Self) {
-        reflectiveValue = this.get(injectToken, notFoundValue, InjectFlags.Self);
+        reflectiveValue = this.get(injectToken, tryValue, InjectFlags.Self);
       } else if (dep.visibility instanceof SkipSelf) {
         if (this.parentInjector) {
-          reflectiveValue = this.parentInjector.get(injectToken, notFoundValue, InjectFlags.Default);
+          reflectiveValue = this.parentInjector.get(injectToken, tryValue, dep.optional ? InjectFlags.Optional : InjectFlags.Default);
         } else {
+          if (dep.optional) {
+            if (notFoundValue === THROW_IF_NOT_FOUND) {
+              return null;
+            }
+          }
           throw reflectiveInjectorErrorFn(injectToken);
         }
       } else {
-        reflectiveValue = this.get(injectToken) || this.parentInjector?.get(injectToken);
+        reflectiveValue = this.get(injectToken, tryValue) || this.parentInjector?.get(injectToken, tryValue);
       }
-      if (reflectiveValue === THROW_IF_NOT_FOUND) {
+      if (reflectiveValue === tryValue) {
         if (dep.optional) {
+          if (notFoundValue === THROW_IF_NOT_FOUND) {
+            return null;
+          }
           return notFoundValue;
         }
         throw reflectiveInjectorErrorFn(injectToken);

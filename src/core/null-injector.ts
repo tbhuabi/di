@@ -1,7 +1,9 @@
 import { Injector } from './injector';
 import { makeInjectError } from './utils/_api';
 
-export const THROW_IF_NOT_FOUND = {};
+export const THROW_IF_NOT_FOUND: any = {
+  __debug_value__: 'THROW_IF_NOT_FOUND'
+};
 
 const nullInjectorErrorFn = makeInjectError('NullInjectorError');
 

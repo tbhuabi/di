@@ -3,10 +3,11 @@ import {
   ConstructorProvider,
   ExistingProvider,
   FactoryProvider,
-  Provider, TypeProvider,
+  Provider,
+  TypeProvider,
   ValueProvider
 } from './provider';
-import { Injector } from './injector';
+import { InjectFlags, Injector } from './injector';
 import { Inject, Optional, Self, SkipSelf } from './metadata';
 import { Type } from './type';
 import { getAnnotations } from './decorators';
@@ -57,15 +58,21 @@ function normalizeValueProviderFactory(provider: ValueProvider): NormalizedProvi
 function normalizeClassProviderFactory(provider: ClassProvider): NormalizedProvider {
   let deps: ReflectiveDependency[]
   if (provider.deps) {
-    deps = normalizeDeps(provider.deps);
+    deps = normalizeDeps(provider.provide, provider.deps);
   } else {
-    deps = normalizeDeps(resolveClassParams(provider.useClass));
+    deps = normalizeDeps(provider.provide, resolveClassParams(provider.useClass));
   }
   return {
     provide: provider.provide,
     deps,
     generateFactory(injector, cacheFn) {
       return function (...args: any[]) {
+        if (provider.provide !== provider.useClass) {
+          const cachedInstance = injector.get(provider.useClass, null, InjectFlags.Optional);
+          if (cachedInstance) {
+            return cachedInstance;
+          }
+        }
         const instance = new provider.useClass(...args);
         const propMetadataKeys = getAnnotations(provider.useClass).getPropMetadataKeys();
         propMetadataKeys.forEach(key => {
@@ -74,7 +81,10 @@ function normalizeClassProviderFactory(provider: ClassProvider): NormalizedProvi
             item.contextCallback(instance, item.propertyKey, injector);
           })
         })
-        cacheFn(provider.useClass, instance);
+        cacheFn(provider.provide, instance);
+        if (provider.provide !== provider.useClass) {
+          cacheFn(provider.useClass, instance);
+        }
         return instance;
       }
     }
@@ -101,7 +111,7 @@ function normalizeFactoryProviderFactory(provider: FactoryProvider): NormalizedP
         return provider.useFactory(...args);
       }
     },
-    deps: normalizeDeps(provider.deps || [])
+    deps: normalizeDeps(provider.provide, provider.deps || [])
   }
 }
 
@@ -131,8 +141,8 @@ function resolveClassParams(construct: Type<any>) {
   }, [])
 }
 
-function normalizeDeps(deps: any[]): ReflectiveDependency[] {
-  return deps.map(dep => {
+function normalizeDeps(provide: any, deps: any[]): ReflectiveDependency[] {
+  return deps.map((dep, index) => {
     const r: ReflectiveDependency = {
       injectKey: null,
       optional: false,
@@ -153,6 +163,10 @@ function normalizeDeps(deps: any[]): ReflectiveDependency[] {
           r.injectKey = item;
         }
       }
+    }
+    if (typeof r.injectKey === 'undefined') {
+      throw new Error(`the ${index} th dependent parameter type of \`${stringify(provide)}\` was not obtained,
+if the dependency is declared later, you can refer to it using \`constructor(@Inject(forwardRef(() => [Type])) paramName: [Type]) {}\``);
     }
     return r;
   })

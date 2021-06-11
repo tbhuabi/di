@@ -99,23 +99,20 @@ export const Optional: OptionalDecorator = function OptionalDecorator(): Paramet
 export interface TypeDecorator {
   <T extends Type<any>>(type: T): T;
 
-  (target: Object, propertyKey?: string | symbol, parameterIndex?: number): void;
+  (target: unknown, propertyKey?: string | symbol, parameterIndex?: number): void;
 }
 
 export interface Prop {
-  token: any;
 }
 
 export interface PropDecorator {
-  (token: any): PropertyDecorator;
+  <T>(token: Type<T> | InjectionToken<T> | ForwardRef<T>, notFoundValue?: T, flags?: InjectFlags): PropertyDecorator;
 
   new(token: any): Prop;
 }
 
 export const Prop: PropDecorator = function PropDecorator<T>(token: Type<T> | InjectionToken<T>, notFoundValue: T = THROW_IF_NOT_FOUND as T, flags?: InjectFlags): PropertyDecorator {
-  if (this instanceof PropDecorator) {
-    this.token = token
-  } else {
+  if (!(this instanceof Prop)) {
     return makePropertyDecorator(Prop, function (instance: any, propertyName: string, injector: Injector) {
       instance[propertyName] = injector.get(token instanceof ForwardRef ? token.getRef() : token, notFoundValue, flags);
     });
