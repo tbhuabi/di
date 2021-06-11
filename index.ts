@@ -11,25 +11,25 @@ import {
   SkipSelf
 } from '@tanbo/di';
 
-
 @Injectable()
-class Child {
+class A {
 
-  index: number
 }
 
-@Injectable()
-class Parent {
-  name = 'parent'
+let i = 0;
 
-  constructor(@Optional() @SkipSelf() private child: Child) {
+@Injectable()
+class B {
+  constructor() {
+    i++
   }
 }
 
-const rootInjector = new ReflectiveInjector(null, [Child])
+const injector = new ReflectiveInjector(null, [B, {
+  provide: A,
+  useClass: B
+}])
 
-const injector = new ReflectiveInjector(null, [Parent])
-
-const instance = injector.get(Parent)
-console.log(instance)
-
+const a = injector.get(B);
+const b = injector.get(A);
+console.log(a === b)

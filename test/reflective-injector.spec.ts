@@ -75,6 +75,55 @@ describe('Provide', () => {
 
     expect(injector.get(A) instanceof B).toBeTruthy()
   })
+
+  test('useClass 只实例化一次顺序获取', () => {
+    @Injectable()
+    class A {
+
+    }
+    let i = 0;
+
+    @Injectable()
+    class B {
+      constructor() {
+        i++
+      }
+    }
+
+    const injector = new ReflectiveInjector(null, [B, {
+      provide: A,
+      useClass: B
+    }])
+
+    injector.get(B);
+    injector.get(A);
+
+    expect(i).toBe(1)
+  })
+  test('useClass 只实例化一次倒序获取', () => {
+    @Injectable()
+    class A {
+
+    }
+    let i = 0;
+
+    @Injectable()
+    class B {
+      constructor() {
+        i++
+      }
+    }
+
+    const injector = new ReflectiveInjector(null, [B, {
+      provide: A,
+      useClass: B
+    }])
+
+    injector.get(A);
+    injector.get(B);
+
+    expect(i).toBe(1)
+  })
   test('单例', () => {
     @Injectable()
     class A {
