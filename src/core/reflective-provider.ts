@@ -83,7 +83,7 @@ function normalizeClassProviderFactory(provider: ClassProvider): NormalizedProvi
         })
         cacheFn(provider.provide, instance);
         if (provider.provide !== provider.useClass) {
-          cacheFn(provider.provide, instance);
+          cacheFn(provider.useClass, instance);
         }
         return instance;
       }
