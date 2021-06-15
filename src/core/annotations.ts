@@ -34,16 +34,16 @@ export interface ParamAnnotation {
 }
 
 export interface PropertyDecoratorContextCallback {
-  (instance: any, propertyName: string | Symbol, injector: Injector): void;
+  (instance: any, propertyName: string | symbol, injector: Injector): void;
 }
 
 export interface PropertyAnnotation {
-  propertyKey: string | Symbol;
+  propertyKey: string | symbol;
   contextCallback: PropertyDecoratorContextCallback;
 }
 
 export interface MethodAnnotation {
-  methodName: string | Symbol;
+  methodName: string | symbol;
   params: any[];
 }
 
