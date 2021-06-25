@@ -15,6 +15,9 @@ export interface InjectDecorator {
   new(token: any): Inject;
 }
 
+/**
+ * 构造函数参数装饰器，用于改变注入 token
+ */
 export const Inject: InjectDecorator = function InjectDecorator(token: any): ParameterDecorator {
   if (this instanceof InjectDecorator) {
     this.token = token

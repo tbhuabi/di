@@ -8,6 +8,9 @@ export enum InjectFlags {
   Optional = 'Optional'
 }
 
+/**
+ * DI 容器抽象基类
+ */
 export abstract class Injector {
   abstract parentInjector: Injector;
 

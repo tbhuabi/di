@@ -28,6 +28,7 @@ export interface ParamDecoratorConfig {
 }
 
 export interface ParamAnnotation {
+  propertyKey: string | symbol;
   parameterIndex: number;
   config: ParamDecoratorConfig,
   decoratorArguments: any[];
@@ -47,6 +48,9 @@ export interface MethodAnnotation {
   params: any[];
 }
 
+/**
+ * 用于保存 class 的元数据
+ */
 export class Annotations {
   private classes = new Map<any, ClassAnnotation>();
   private props = new Map<any, PropertyAnnotation[]>();

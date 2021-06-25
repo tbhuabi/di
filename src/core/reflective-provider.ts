@@ -25,6 +25,10 @@ export interface NormalizedProvider {
   deps: ReflectiveDependency[]
 }
 
+/**
+ * 标准化 provide，并返回统一数据结构
+ * @param providers
+ */
 export function normalizeProviders(providers: Provider[]): NormalizedProvider[] {
   return providers.map(provider => {
     if ((provider as ValueProvider).useValue) {

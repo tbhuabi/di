@@ -11,6 +11,9 @@ export interface InjectableDecorator {
   new(): Injectable;
 }
 
+/**
+ * 可注入类的装饰器
+ */
 export const Injectable: InjectableDecorator = function InjectableDecorator(): ClassDecorator {
   if (!(this instanceof InjectableDecorator)) {
     return makeClassDecorator(Injectable, (params, annotations, construct) => {
