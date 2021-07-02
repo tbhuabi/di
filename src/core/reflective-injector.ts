@@ -35,6 +35,9 @@ export class ReflectiveInjector extends Injector {
       if (this.parentInjector) {
         return this.parentInjector.get(token, notFoundValue);
       }
+      if (notFoundValue !== THROW_IF_NOT_FOUND) {
+        return notFoundValue;
+      }
       throw reflectiveInjectorErrorFn(token);
     }
     if (this.reflectiveValues.has(token)) {
@@ -94,7 +97,7 @@ export class ReflectiveInjector extends Injector {
           throw reflectiveInjectorErrorFn(injectToken);
         }
       } else {
-        reflectiveValue = this.get(injectToken, tryValue) || this.parentInjector?.get(injectToken, tryValue);
+        reflectiveValue = this.get(injectToken, tryValue);
       }
       if (reflectiveValue === tryValue) {
         if (dep.optional) {
