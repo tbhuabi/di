@@ -8,7 +8,7 @@
     "lint": "eslint ./src --ext .ts",
     "test": "cross-env env=test jest",
     "test-c": "cross-env env=test jest --coverage",
-    "build:lib": "rimraf package/bundles && tsc -p tsconfig-build.json",
+    "build:lib": "rimraf package/bundles && tsc -p tsconfig-build.json && tsc -p tsconfig-build-umd.json",
     "publish:lib": "npm run build:lib && cd package && npm publish --access public"
   },
   "author": "tanbo",

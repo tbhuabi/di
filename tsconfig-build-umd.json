@@ -1,8 +1,8 @@
 {
   "compilerOptions": {
     "declaration": true,
-    "target": "es6",
-    "module": "es6",
+    "target": "es5",
+    "module": "umd",
     "moduleResolution": "node",
     "sourceMap": false,
     "emitDecoratorMetadata": true,
@@ -16,7 +16,7 @@
     "downlevelIteration": true,
     "esModuleInterop": true,
     "baseUrl": "./",
-    "outDir": "package/bundles/esm",
+    "outDir": "package/bundles/umd",
     "paths": {
       "@tanbo/di": [
         "src/public-api.ts"
