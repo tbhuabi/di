@@ -66,6 +66,10 @@ export class ReflectiveInjector extends Injector {
         const parentInjector = this.parentInjector;
 
         if (!parentInjector || parentInjector instanceof NullInjector) {
+          if (normalizedProvider.scope === 'root') {
+            this.normalizedProviders.push(normalizedProvider)
+            return this.getValue(token, notFoundValue, normalizedProvider);
+          }
           throw provideScopeError(normalizedProvider.scope)
         }
       }
