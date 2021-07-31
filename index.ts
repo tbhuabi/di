@@ -5,12 +5,12 @@ import {
   Injectable,
   InjectFlags, InjectionToken,
   Optional,
-  Prop, Provider, ProvideScopeModule,
+  Prop, Provider, Scope,
   ReflectiveInjector,
   Self,
   SkipSelf
 } from '@tanbo/di';
-const scope = new ProvideScopeModule('scope')
+const scope = new Scope('scope')
 const rootInjector = new ReflectiveInjector(null, [])
 
 @Injectable({

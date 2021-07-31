@@ -7,7 +7,7 @@ import { ForwardRef } from './forward-ref';
 import { Type } from './type';
 import { InjectionToken } from './injection-token';
 import { NullInjector, THROW_IF_NOT_FOUND } from './null-injector';
-import { ProvideScope } from './injectable';
+import { Scope } from './injectable';
 
 const reflectiveInjectorErrorFn = makeInjectError('ReflectiveInjectorError');
 const provideScopeError = madeProvideScopeError('ReflectiveInjectorError');
@@ -21,7 +21,7 @@ export class ReflectiveInjector extends Injector {
 
   constructor(public parentInjector: Injector,
               private staticProviders: Provider[],
-              private scope?: ProvideScope) {
+              private scope?: Scope) {
     super()
     this.normalizedProviders = staticProviders.map(provide => {
       return normalizeProvider(provide)

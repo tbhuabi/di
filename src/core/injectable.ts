@@ -1,14 +1,14 @@
 import { makeClassDecorator } from './decorators';
 
-export class ProvideScopeModule {
-  constructor(public description: string) {
+export class Scope {
+  constructor(public name: string) {
   }
   toString() {
-    return this.description || '[anonymous provide scope]'
+    return this.name || '[anonymous provide scope]'
   }
 }
 
-export type ProvideScope = 'root' | ProvideScopeModule;
+export type ProvideScope = 'root' | Scope;
 
 export interface InjectableOptions {
   provideIn: ProvideScope

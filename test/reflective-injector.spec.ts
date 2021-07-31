@@ -6,7 +6,7 @@ import {
   InjectFlags,
   InjectionToken, NullInjector,
   Optional,
-  Prop, ProvideScopeModule,
+  Prop, Scope,
   ReflectiveInjector,
   Self,
   SkipSelf
@@ -421,7 +421,7 @@ describe('ReflectiveInjector', () => {
 
 describe('ReflectiveInjector Scope 注入', () => {
   test('正确获取到实例', () => {
-    const scope = new ProvideScopeModule('scope')
+    const scope = new Scope('scope')
     const rootInjector = new ReflectiveInjector(null, [], scope)
 
     @Injectable({
@@ -437,7 +437,7 @@ describe('ReflectiveInjector Scope 注入', () => {
     expect(testInstance).toBeInstanceOf(Test)
   })
   test('确保重复获取实例均为同一实例', () => {
-    const scope = new ProvideScopeModule('scope')
+    const scope = new Scope('scope')
     const rootInjector = new ReflectiveInjector(null, [], scope)
 
     @Injectable({
@@ -454,7 +454,7 @@ describe('ReflectiveInjector Scope 注入', () => {
     expect(testInstance).toBe(testInstance2)
   })
   test('确保 provide 挂载到正确位置', () => {
-    const scope = new ProvideScopeModule('scope')
+    const scope = new Scope('scope')
     const rootInjector = new ReflectiveInjector(null, [])
 
     @Injectable({
@@ -473,7 +473,7 @@ describe('ReflectiveInjector Scope 注入', () => {
     expect((injector as any).normalizedProviders).toEqual([])
   })
   test('确保多个 injector 获取不会重复注册', () => {
-    const scope = new ProvideScopeModule('scope')
+    const scope = new Scope('scope')
     const rootInjector = new ReflectiveInjector(null, [])
 
     @Injectable({
@@ -493,7 +493,7 @@ describe('ReflectiveInjector Scope 注入', () => {
     expect((scopeInjector as any).normalizedProviders[0].provide).toBe(Test)
   })
   test('确保多个 injector 获取实例相同', () => {
-    const scope = new ProvideScopeModule('scope')
+    const scope = new Scope('scope')
     const rootInjector = new ReflectiveInjector(null, [])
 
     @Injectable({
@@ -512,7 +512,7 @@ describe('ReflectiveInjector Scope 注入', () => {
     expect(instance1).toBe(instance2)
   })
   test('确保 scope 声明时也注册到正确位置', () => {
-    const scope = new ProvideScopeModule('scope')
+    const scope = new Scope('scope')
     const rootInjector = new ReflectiveInjector(null, [])
 
     @Injectable({
@@ -532,7 +532,7 @@ describe('ReflectiveInjector Scope 注入', () => {
     expect((scopeInjector as any).normalizedProviders.length).toBe(1)
   })
   test('确保 scope 声明就近查的原则', () => {
-    const scope = new ProvideScopeModule('scope')
+    const scope = new Scope('scope')
     const rootInjector = new ReflectiveInjector(null, [])
 
     @Injectable({
