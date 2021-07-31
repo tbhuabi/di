@@ -10,21 +10,20 @@ import {
   Self,
   SkipSelf
 } from '@tanbo/di';
-
 const scope = new ProvideScopeModule('scope')
 const rootInjector = new ReflectiveInjector(null, [])
 
-@Injectable()
+@Injectable({
+  provideIn: scope
+})
 class Test {
   name = 'test'
 }
+const scopeInjector = new ReflectiveInjector(rootInjector, [], scope)
 
-const injectionToken = new InjectionToken('')
-const injector = new ReflectiveInjector(rootInjector, [{
-  provide: injectionToken,
-  useValue: null
-}])
+const injector = new ReflectiveInjector(scopeInjector, [Test])
 
-const testInstance = injector.get(injectionToken)
+const instance1= scopeInjector.get(Test)
+const instance2 = injector.get(Test)
 
-console.log(testInstance)
+console.log(injector)

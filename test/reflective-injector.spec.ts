@@ -525,8 +525,31 @@ describe('ReflectiveInjector Scope 注入', () => {
 
     const injector = new ReflectiveInjector(scopeInjector, [Test])
 
-    expect((injector as any).normalizedProviders.length).toBe(0)
+    scopeInjector.get(Test)
+    injector.get(Test)
+
+    expect((injector as any).normalizedProviders.length).toBe(1)
     expect((scopeInjector as any).normalizedProviders.length).toBe(1)
+  })
+  test('确保 scope 声明就近查的原则', () => {
+    const scope = new ProvideScopeModule('scope')
+    const rootInjector = new ReflectiveInjector(null, [])
+
+    @Injectable({
+      provideIn: scope
+    })
+    class Test {
+      name = 'test'
+    }
+    const scopeInjector = new ReflectiveInjector(rootInjector, [], scope)
+
+    const injector = new ReflectiveInjector(scopeInjector, [Test])
+
+    const instance1= scopeInjector.get(Test)
+    const instance2 = injector.get(Test)
+    expect(instance1).toBeInstanceOf(Test)
+    expect(instance2).toBeInstanceOf(Test)
+    expect(instance1).not.toBe(instance2)
   })
 })
 

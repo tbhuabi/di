@@ -16,22 +16,15 @@ const provideScopeError = madeProvideScopeError('ReflectiveInjectorError');
  * 反射注入器
  */
 export class ReflectiveInjector extends Injector {
-  private readonly normalizedProviders: NormalizedProvider[] = [];
-  private readonly recordScopeToken: Type<any>[] = [];
+  private readonly normalizedProviders: NormalizedProvider[];
   private readonly recordValues = new Map<Type<any> | InjectionToken<any>, any>();
-
 
   constructor(public parentInjector: Injector,
               private staticProviders: Provider[],
               private scope?: ProvideScope) {
     super()
-    staticProviders.forEach(provide => {
-      const p = normalizeProvider(provide)
-      if (p.scope) {
-        this.handleProvideScope(p)
-        return;
-      }
-      this.normalizedProviders.push(p);
+    this.normalizedProviders = staticProviders.map(provide => {
+      return normalizeProvider(provide)
     })
   }
 
@@ -55,27 +48,28 @@ export class ReflectiveInjector extends Injector {
     if (this.recordValues.has(token)) {
       return this.recordValues.get(token);
     }
-    if (!(token instanceof InjectionToken)) {
-      const normalizedProvider = normalizeProvider(token)
-      if (normalizedProvider.scope && !this.recordScopeToken.includes(token)) {
-        this.handleProvideScope(normalizedProvider)
-        this.recordScopeToken.push(token);
-      }
-    }
 
     for (let i = 0; i < this.normalizedProviders.length; i++) {
-      const {provide, deps, generateFactory} = this.normalizedProviders[i];
-      if (provide === token) {
-        const factory = generateFactory(this, (token: Type<any>, value: any) => {
-          this.recordValues.set(token, value)
-        });
-        const params = this.resolveDeps(deps || [], notFoundValue);
-        const reflectiveValue = factory(...params);
-        this.recordValues.set(token, reflectiveValue);
-        return reflectiveValue
+      const normalizedProvider = this.normalizedProviders[i];
+      if (normalizedProvider.provide === token) {
+        return this.getValue(token, notFoundValue, normalizedProvider);
       }
     }
 
+    if (!(token instanceof InjectionToken)) {
+      const normalizedProvider = normalizeProvider(token)
+      if (normalizedProvider.scope) {
+        if (this.scope === normalizedProvider.scope) {
+          this.normalizedProviders.push(normalizedProvider)
+          return this.getValue(token, notFoundValue, normalizedProvider);
+        }
+        const parentInjector = this.parentInjector;
+
+        if (!parentInjector || parentInjector instanceof NullInjector) {
+          throw provideScopeError(normalizedProvider.scope)
+        }
+      }
+    }
     if (flags === InjectFlags.Self) {
       if (notFoundValue === THROW_IF_NOT_FOUND) {
         throw reflectiveInjectorErrorFn(token);
@@ -92,26 +86,15 @@ export class ReflectiveInjector extends Injector {
     return notFoundValue;
   }
 
-  private handleProvideScope(normalizedProvider: NormalizedProvider) {
-    // eslint-disable-next-line @typescript-eslint/no-this-alias
-    let injector: ReflectiveInjector = this;
-    while (injector) {
-      if (injector.scope === normalizedProvider.scope) {
-        for (const item of injector.normalizedProviders) {
-          if (item.scope === normalizedProvider.scope) {
-            return;
-          }
-        }
-        injector.normalizedProviders.push(normalizedProvider)
-        return
-      } else {
-        injector = injector.parentInjector as ReflectiveInjector
-        if (injector instanceof NullInjector) {
-          break;
-        }
-      }
-    }
-    throw provideScopeError(normalizedProvider.scope)
+  private getValue<T>(token: Type<T> | InjectionToken<T>, notFoundValue: T = THROW_IF_NOT_FOUND as T, normalizedProvider: NormalizedProvider) {
+    const {generateFactory, deps} = normalizedProvider;
+    const factory = generateFactory(this, (token: Type<any>, value: any) => {
+      this.recordValues.set(token, value)
+    });
+    const params = this.resolveDeps(deps || [], notFoundValue);
+    const value = factory(...params);
+    this.recordValues.set(token, value);
+    return value;
   }
 
   /**

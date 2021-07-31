@@ -7,7 +7,7 @@ export const THROW_IF_NOT_FOUND: any = {
 
 const nullInjectorErrorFn = makeInjectError('NullInjectorError');
 
-export class NullInjector implements Injector {
+export class NullInjector extends Injector {
   parentInjector = null;
   get(token: any, notFoundValue: any = THROW_IF_NOT_FOUND): any {
     if (notFoundValue === THROW_IF_NOT_FOUND) {
