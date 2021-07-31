@@ -1,7 +1,7 @@
 import { Provider } from './provider';
 import { InjectFlags, Injector } from './injector';
 import { NormalizedProvider, normalizeProvider, ReflectiveDependency } from './reflective-provider';
-import { Scope, Self, SkipSelf } from './metadata';
+import { Self, SkipSelf } from './metadata';
 import { madeProvideScopeError, makeInjectError } from './utils/inject-error';
 import { ForwardRef } from './forward-ref';
 import { Type } from './type';
@@ -121,10 +121,6 @@ export class ReflectiveInjector extends Injector {
           }
           throw reflectiveInjectorErrorFn(injectToken);
         }
-      } else if (dep.visibility instanceof Scope) {
-        const scope = dep.visibility.scope;
-        const s = scope instanceof ForwardRef ? scope.getRef() : scope;
-        reflectiveValue = this.get(injectToken, tryValue, this.scope === s ? InjectFlags.Self : InjectFlags.Default)
       } else {
         reflectiveValue = this.get(injectToken, tryValue);
       }

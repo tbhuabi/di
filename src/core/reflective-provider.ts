@@ -8,7 +8,7 @@ import {
   ValueProvider
 } from './provider';
 import { InjectFlags, Injector } from './injector';
-import { Inject, Optional, Scope, Self, SkipSelf } from './metadata';
+import { Inject, Optional, Self, SkipSelf } from './metadata';
 import { Type } from './type';
 import { getAnnotations } from './decorators';
 import { stringify } from './utils/stringify';
@@ -17,7 +17,7 @@ import { InjectionToken } from './injection-token';
 
 export interface ReflectiveDependency {
   injectKey: any;
-  visibility: SkipSelf | Self | Scope;
+  visibility: SkipSelf | Self;
   optional: boolean;
 }
 
@@ -154,7 +154,7 @@ function resolveClassParams(construct: Type<any>) {
     throw new Error(`class \`${stringify(construct)}\` is not injectable!`);
   }
   const deps = (metadata.paramTypes || []).map(i => [i]);
-  const metadataKeys = [Inject, Self, SkipSelf, Optional, Scope];
+  const metadataKeys = [Inject, Self, SkipSelf, Optional];
   metadataKeys.forEach(key => {
     (annotations.getParamMetadata(key) || []).forEach(item => {
       deps[item.parameterIndex].push(item.metadata);
@@ -180,7 +180,7 @@ function normalizeDeps(provide: any, deps: any[]): ReflectiveDependency[] {
         const item = dep[i];
         if (item instanceof Inject) {
           r.injectKey = item.token
-        } else if (item instanceof Self || item instanceof SkipSelf || item instanceof Scope) {
+        } else if (item instanceof Self || item instanceof SkipSelf) {
           r.visibility = item
         } else if (item instanceof Optional) {
           r.optional = true
