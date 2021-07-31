@@ -1,24 +1,25 @@
 import { Type } from './type';
+import { InjectionToken } from './injection-token';
 
 export interface ClassProvider<T = any> {
-  provide: any;
+  provide: Type<T> | InjectionToken<T>;
   useClass: Type<T>;
   deps?: any[];
 }
 
 export interface FactoryProvider<T = any> {
-  provide: any;
+  provide: Type<T> | InjectionToken<T>;
   useFactory: (...args: any[]) => T;
   deps?: any[];
 }
 
 export interface ValueProvider<T = any> {
-  provide: any;
+  provide: Type<T> | InjectionToken<T>;
   useValue: T;
 }
 
 export interface ExistingProvider<T = any> {
-  provide: any;
+  provide: Type<T> | InjectionToken<T>;
   useExisting: T;
 }
 

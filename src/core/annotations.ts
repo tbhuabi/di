@@ -2,6 +2,7 @@ import { Injector } from './injector';
 
 export interface ClassAnnotation {
   paramTypes: any[];
+  metadata: any;
 }
 
 

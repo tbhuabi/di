@@ -46,11 +46,12 @@ export function makeMethodDecorator(token: any, ...params: any[]): MethodDecorat
 /**
  * 创建类装饰器的工厂函数
  */
-export function makeClassDecorator(token: any): ClassDecorator {
+export function makeClassDecorator(token: any, metadata: any): ClassDecorator {
   return function (target) {
     const annotations = getAnnotations(target);
     annotations.setClassMetadata(token, {
-      paramTypes: Reflect.getMetadata('design:paramtypes', target)
+      paramTypes: Reflect.getMetadata('design:paramtypes', target),
+      metadata
     });
   }
 }
