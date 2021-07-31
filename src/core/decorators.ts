@@ -1,21 +1,18 @@
 import {
   Annotations,
-  ClassDecoratorContextCallback,
-  ParamDecoratorConfig,
   PropertyDecoratorContextCallback
 } from './annotations';
 
 /**
  * 创建参数装饰器的工厂函数
  */
-export function makeParamDecorator(token: any, config: ParamDecoratorConfig, ...params: any[]): ParameterDecorator {
+export function makeParamDecorator(token: any, metadata): ParameterDecorator {
   return function (target, propertyKey, parameterIndex) {
     const annotations = getAnnotations(target);
     annotations.pushParamMetadata(token, {
       propertyKey,
       parameterIndex,
-      config,
-      decoratorArguments: params
+      metadata
     });
   }
 }
@@ -49,13 +46,11 @@ export function makeMethodDecorator(token: any, ...params: any[]): MethodDecorat
 /**
  * 创建类装饰器的工厂函数
  */
-export function makeClassDecorator(token: any, contextCallback?: ClassDecoratorContextCallback, ...args: any[]): ClassDecorator {
+export function makeClassDecorator(token: any): ClassDecorator {
   return function (target) {
     const annotations = getAnnotations(target);
     annotations.setClassMetadata(token, {
-      paramTypes: Reflect.getMetadata('design:paramtypes', target),
-      decoratorArguments: args,
-      contextCallback
+      paramTypes: Reflect.getMetadata('design:paramtypes', target)
     });
   }
 }

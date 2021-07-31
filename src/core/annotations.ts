@@ -1,37 +1,14 @@
 import { Injector } from './injector';
-import { Type } from './type';
-import { ReflectiveDependency } from './reflective-provider';
-
-export interface ClassDecoratorContextCallback {
-  (paramsTypes: any[], annotations: Annotations, constructor: Type<any>): any[] | void; // return dependency declaration
-}
-
-export interface ClassDecoratorInvokeFn {
-  (constructor: Type<any>, paramTypes: any[]): void;
-}
-
-export interface ClassDecoratorPreset {
-  invoke: ClassDecoratorInvokeFn;
-  // contextCallback?:
-}
 
 export interface ClassAnnotation {
   paramTypes: any[];
-  decoratorArguments: any[];
-  invoke?: ClassDecoratorInvokeFn,
-  contextCallback?: ClassDecoratorContextCallback;
 }
 
-export interface ParamDecoratorConfig {
-  metadataGenerator: () => any;
-  reflectiveController?: (reflectiveDependency: ReflectiveDependency) => void;
-}
 
 export interface ParamAnnotation {
   propertyKey: string | symbol;
   parameterIndex: number;
-  config: ParamDecoratorConfig,
-  decoratorArguments: any[];
+  metadata: any
 }
 
 export interface PropertyDecoratorContextCallback {

@@ -12,6 +12,7 @@ import { Inject, Optional, Self, SkipSelf } from './metadata';
 import { Type } from './type';
 import { getAnnotations } from './decorators';
 import { stringify } from './utils/stringify';
+import { Injectable } from './injectable';
 
 export interface ReflectiveDependency {
   injectKey: any;
@@ -135,14 +136,18 @@ function normalizeTypeProviderFactory(provider: TypeProvider): NormalizedProvide
 
 function resolveClassParams(construct: Type<any>) {
   const annotations = getAnnotations(construct);
-  const classMetadataKeys = annotations.getClassMetadataKeys();
-  if (classMetadataKeys.length === 0) {
-    throw new Error(`class \`${stringify(construct)}\` not find ClassDecorator!`);
+  const metadata = annotations.getClassMetadata(Injectable);
+  if (typeof metadata === 'undefined') {
+    throw new Error(`class/function \`${stringify(construct)}\` is not injectable!`);
   }
-  return classMetadataKeys.reduce((deps: [], key) => {
-    const annotation = annotations.getClassMetadata(key);
-    return annotation.contextCallback?.(annotation.paramTypes, annotations, construct) || deps;
-  }, [])
+  const deps = (metadata.paramTypes || []).map(i => [i]);
+  const metadataKeys = [Inject, Self, SkipSelf, Optional];
+  metadataKeys.forEach(key => {
+    (annotations.getParamMetadata(key) || []).forEach(item => {
+      deps[item.parameterIndex].push(item.metadata);
+    })
+  })
+  return deps;
 }
 
 function normalizeDeps(provide: any, deps: any[]): ReflectiveDependency[] {
