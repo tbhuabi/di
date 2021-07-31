@@ -2,7 +2,15 @@ import { stringify } from './stringify';
 
 export function makeInjectError(name: string) {
   return function injectError(token: any) {
-    const error =  new Error(`No provide for ${stringify(token)}!`);
+    const error =  new Error(`No provide for \`${stringify(token)}\`!`);
+    error.name = name;
+    return error;
+  }
+}
+
+export function madeProvideScopeError(name: string) {
+  return function provideError(token: any) {
+    const error =  new Error(`can not found provide scope \`${stringify(token)}\`!`);
     error.name = name;
     return error;
   }

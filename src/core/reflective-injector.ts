@@ -1,26 +1,38 @@
 import { Provider } from './provider';
 import { InjectFlags, Injector } from './injector';
-import { NormalizedProvider, normalizeProviders, ReflectiveDependency } from './reflective-provider';
-import { Self, SkipSelf } from './metadata';
-import { makeInjectError } from './utils/inject-error';
+import { NormalizedProvider, normalizeProvider, ReflectiveDependency } from './reflective-provider';
+import { Scope, Self, SkipSelf } from './metadata';
+import { madeProvideScopeError, makeInjectError } from './utils/inject-error';
 import { ForwardRef } from './forward-ref';
 import { Type } from './type';
 import { InjectionToken } from './injection-token';
-import { THROW_IF_NOT_FOUND } from './null-injector';
+import { NullInjector, THROW_IF_NOT_FOUND } from './null-injector';
+import { ProvideScope } from './injectable';
 
 const reflectiveInjectorErrorFn = makeInjectError('ReflectiveInjectorError');
+const provideScopeError = madeProvideScopeError('ReflectiveInjectorError');
 
 /**
  * 反射注入器
  */
 export class ReflectiveInjector extends Injector {
-  private readonly normalizedProviders: NormalizedProvider[];
-  private readonly reflectiveValues = new Map<any, any>();
+  private readonly normalizedProviders: NormalizedProvider[] = [];
+  private readonly recordScopeToken: Type<any>[] = [];
+  private readonly recordValues = new Map<Type<any> | InjectionToken<any>, any>();
 
 
-  constructor(public parentInjector: Injector, private staticProviders: Provider[]) {
+  constructor(public parentInjector: Injector,
+              private staticProviders: Provider[],
+              private scope?: ProvideScope) {
     super()
-    this.normalizedProviders = normalizeProviders(staticProviders);
+    staticProviders.forEach(provide => {
+      const p = normalizeProvider(provide)
+      if (p.scope) {
+        this.handleProvideScope(p)
+        return;
+      }
+      this.normalizedProviders.push(p);
+    })
   }
 
   /**
@@ -40,18 +52,26 @@ export class ReflectiveInjector extends Injector {
       }
       throw reflectiveInjectorErrorFn(token);
     }
-    if (this.reflectiveValues.has(token)) {
-      return this.reflectiveValues.get(token);
+    if (this.recordValues.has(token)) {
+      return this.recordValues.get(token);
     }
+    if (!(token instanceof InjectionToken)) {
+      const normalizedProvider = normalizeProvider(token)
+      if (normalizedProvider.scope && !this.recordScopeToken.includes(token)) {
+        this.handleProvideScope(normalizedProvider)
+        this.recordScopeToken.push(token);
+      }
+    }
+
     for (let i = 0; i < this.normalizedProviders.length; i++) {
       const {provide, deps, generateFactory} = this.normalizedProviders[i];
       if (provide === token) {
         const factory = generateFactory(this, (token: Type<any>, value: any) => {
-          this.reflectiveValues.set(token, value)
+          this.recordValues.set(token, value)
         });
         const params = this.resolveDeps(deps || [], notFoundValue);
         const reflectiveValue = factory(...params);
-        this.reflectiveValues.set(token, reflectiveValue);
+        this.recordValues.set(token, reflectiveValue);
         return reflectiveValue
       }
     }
@@ -70,6 +90,28 @@ export class ReflectiveInjector extends Injector {
       throw reflectiveInjectorErrorFn(token);
     }
     return notFoundValue;
+  }
+
+  private handleProvideScope(normalizedProvider: NormalizedProvider) {
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
+    let injector: ReflectiveInjector = this;
+    while (injector) {
+      if (injector.scope === normalizedProvider.scope) {
+        for (const item of injector.normalizedProviders) {
+          if (item.scope === normalizedProvider.scope) {
+            return;
+          }
+        }
+        injector.normalizedProviders.push(normalizedProvider)
+        return
+      } else {
+        injector = injector.parentInjector as ReflectiveInjector
+        if (injector instanceof NullInjector) {
+          break;
+        }
+      }
+    }
+    throw provideScopeError(normalizedProvider.scope)
   }
 
   /**
@@ -96,6 +138,10 @@ export class ReflectiveInjector extends Injector {
           }
           throw reflectiveInjectorErrorFn(injectToken);
         }
+      } else if (dep.visibility instanceof Scope) {
+        const scope = dep.visibility.scope;
+        const s = scope instanceof ForwardRef ? scope.getRef() : scope;
+        reflectiveValue = this.get(injectToken, tryValue, this.scope === s ? InjectFlags.Self : InjectFlags.Default)
       } else {
         reflectiveValue = this.get(injectToken, tryValue);
       }

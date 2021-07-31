@@ -6,13 +6,13 @@ import {
   InjectFlags,
   InjectionToken, NullInjector,
   Optional,
-  Prop,
+  Prop, ProvideScopeModule,
   ReflectiveInjector,
   Self,
   SkipSelf
 } from '@tanbo/di';
 
-describe('Provide', () => {
+describe('ReflectiveInjector', () => {
   const valueProvide = {}
   const valueInjectionToken = new InjectionToken('')
 
@@ -416,6 +416,117 @@ describe('Provide', () => {
     expect(injector.parentInjector instanceof NullInjector).toBeTruthy()
     expect(() => injector.get(B)).toThrow()
     expect(fn).toBeCalled()
+  })
+})
+
+describe('ReflectiveInjector Scope 注入', () => {
+  test('正确获取到实例', () => {
+    const scope = new ProvideScopeModule('scope')
+    const rootInjector = new ReflectiveInjector(null, [], scope)
+
+    @Injectable({
+      provideIn: scope
+    })
+    class Test {
+      name = 'test'
+    }
+    const injector = new ReflectiveInjector(rootInjector, [])
+
+    const testInstance = injector.get(Test)
+
+    expect(testInstance).toBeInstanceOf(Test)
+  })
+  test('确保重复获取实例均为同一实例', () => {
+    const scope = new ProvideScopeModule('scope')
+    const rootInjector = new ReflectiveInjector(null, [], scope)
+
+    @Injectable({
+      provideIn: scope
+    })
+    class Test {
+      name = 'test'
+    }
+    const injector = new ReflectiveInjector(rootInjector, [])
+
+    const testInstance = injector.get(Test)
+    const testInstance2 = injector.get(Test)
+
+    expect(testInstance).toBe(testInstance2)
+  })
+  test('确保 provide 挂载到正确位置', () => {
+    const scope = new ProvideScopeModule('scope')
+    const rootInjector = new ReflectiveInjector(null, [])
+
+    @Injectable({
+      provideIn: scope
+    })
+    class Test {
+      name = 'test'
+    }
+    const scopeInjector = new ReflectiveInjector(rootInjector, [], scope)
+
+    const injector = new ReflectiveInjector(scopeInjector, [])
+
+    injector.get(Test)
+    expect((scopeInjector as any).normalizedProviders[0].provide).toBe(Test)
+    expect((rootInjector as any).normalizedProviders).toEqual([])
+    expect((injector as any).normalizedProviders).toEqual([])
+  })
+  test('确保多个 injector 获取不会重复注册', () => {
+    const scope = new ProvideScopeModule('scope')
+    const rootInjector = new ReflectiveInjector(null, [])
+
+    @Injectable({
+      provideIn: scope
+    })
+    class Test {
+      name = 'test'
+    }
+    const scopeInjector = new ReflectiveInjector(rootInjector, [], scope)
+
+    const injector = new ReflectiveInjector(scopeInjector, [])
+    const injector2 = new ReflectiveInjector(scopeInjector, [])
+
+    injector.get(Test)
+    injector2.get(Test)
+    expect((scopeInjector as any).normalizedProviders.length).toBe(1)
+    expect((scopeInjector as any).normalizedProviders[0].provide).toBe(Test)
+  })
+  test('确保多个 injector 获取实例相同', () => {
+    const scope = new ProvideScopeModule('scope')
+    const rootInjector = new ReflectiveInjector(null, [])
+
+    @Injectable({
+      provideIn: scope
+    })
+    class Test {
+      name = 'test'
+    }
+    const scopeInjector = new ReflectiveInjector(rootInjector, [], scope)
+
+    const injector = new ReflectiveInjector(scopeInjector, [])
+    const injector2 = new ReflectiveInjector(scopeInjector, [])
+
+    const instance1 = injector.get(Test)
+    const instance2 = injector2.get(Test)
+    expect(instance1).toBe(instance2)
+  })
+  test('确保 scope 声明时也注册到正确位置', () => {
+    const scope = new ProvideScopeModule('scope')
+    const rootInjector = new ReflectiveInjector(null, [])
+
+    @Injectable({
+      provideIn: scope
+    })
+    class Test {
+      name = 'test'
+    }
+    const scopeInjector = new ReflectiveInjector(rootInjector, [], scope)
+
+    const injector = new ReflectiveInjector(scopeInjector, [Test])
+
+    expect((injector as any).normalizedProviders.length).toBe(0)
+    expect((scopeInjector as any).normalizedProviders.length).toBe(1)
   })
 })
 

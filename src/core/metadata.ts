@@ -4,27 +4,49 @@ import { InjectFlags, Injector } from './injector';
 import { InjectionToken } from './injection-token';
 import { ForwardRef } from './forward-ref';
 import { THROW_IF_NOT_FOUND } from './null-injector';
+import { ProvideScope } from './injectable';
 
 export interface Inject {
-  token: any;
+  token: InjectionToken<any> | Type<any> | ForwardRef<InjectionToken<any> | Type<any>>;
 }
 
 export interface InjectDecorator {
-  (token: any): ParameterDecorator;
+  (token: InjectionToken<any> | Type<any> | ForwardRef<InjectionToken<any> | Type<any>>): ParameterDecorator;
 
-  new(token: any): Inject;
+  new(token: InjectionToken<any> | Type<any> | ForwardRef<InjectionToken<any> | Type<any>>): Inject;
 }
 
 /**
  * 构造函数参数装饰器，用于改变注入 token
  */
-export const Inject: InjectDecorator = function InjectDecorator(token: any): ParameterDecorator {
+export const Inject: InjectDecorator = function InjectDecorator(token: InjectionToken<any> | Type<any> | ForwardRef<InjectionToken<any> | Type<any>>): ParameterDecorator {
   if (this instanceof Inject) {
     this.token = token
   } else {
     return makeParamDecorator(Inject, new Inject(token));
   }
 } as InjectDecorator
+
+export interface Scope {
+  scope: ProvideScope | ForwardRef<ProvideScope>;
+}
+
+export interface ScopeDecorator {
+  (scope: ProvideScope | ForwardRef<ProvideScope>): ParameterDecorator;
+
+  new(scope: ProvideScope | ForwardRef<ProvideScope>): Scope;
+}
+
+/**
+ * 构造函数参数装饰器，用于改变注入 token
+ */
+export const Scope: ScopeDecorator = function ScopeDecorator(scope: ProvideScope | ForwardRef<ProvideScope>): ParameterDecorator {
+  if (this instanceof Scope) {
+    this.scope = scope
+  } else {
+    return makeParamDecorator(Scope, new Scope(scope));
+  }
+} as ScopeDecorator
 
 export interface Self {
 }

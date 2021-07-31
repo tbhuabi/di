@@ -3,33 +3,28 @@ import {
   forwardRef,
   Inject,
   Injectable,
-  InjectFlags,
+  InjectFlags, InjectionToken,
   Optional,
-  Prop,
+  Prop, Provider, ProvideScopeModule,
   ReflectiveInjector,
   Self,
   SkipSelf
 } from '@tanbo/di';
 
-@Injectable()
-class A {
-
-}
-
-let i = 0;
+const scope = new ProvideScopeModule('scope')
+const rootInjector = new ReflectiveInjector(null, [])
 
 @Injectable()
-class B {
-  constructor() {
-    i++
-  }
+class Test {
+  name = 'test'
 }
 
-const injector = new ReflectiveInjector(null, [B, {
-  provide: A,
-  useClass: B
+const injectionToken = new InjectionToken('')
+const injector = new ReflectiveInjector(rootInjector, [{
+  provide: injectionToken,
+  useValue: null
 }])
 
-const a = injector.get(B);
-const b = injector.get(A);
-console.log(a === b)
+const testInstance = injector.get(injectionToken)
+
+console.log(testInstance)
