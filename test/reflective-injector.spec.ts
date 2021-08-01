@@ -578,5 +578,81 @@ describe('ReflectiveInjector Scope 注入', () => {
     expect((scopeInjector as any).normalizedProviders.length).toBe(1)
     expect(fn).not.toBeCalled()
   })
+  test('scope 支持可选查询', () => {
+    const scope = new Scope('scope')
+
+    @Injectable({
+      provideIn: scope
+    })
+    class Test {
+      name = 'test'
+    }
+
+    @Injectable()
+    class Test2 {
+      constructor(@Optional() public test: Test) {
+      }
+    }
+    const rootInjector = new ReflectiveInjector(null, [])
+    const scopeInjector = new ReflectiveInjector(rootInjector, [Test2])
+
+    const injector = new ReflectiveInjector(scopeInjector, [])
+
+    const test2Instance = injector.get(Test2)
+
+    expect(test2Instance.test).toBeNull()
+  })
+  test('scope 支持可选查询2', () => {
+
+    const scope = new Scope('scope')
+
+    @Injectable({
+      provideIn: scope
+    })
+    class Test {
+      name = 'test'
+    }
+    const injector = new ReflectiveInjector(null, [])
+
+    const instance = injector.get(Test, null)
+    expect(instance).toBeNull()
+  })
+  test('抛出找不到 scope 异常', () => {
+    const scope = new Scope('test')
+    @Injectable({
+      provideIn: scope
+    })
+    class Test {
+      name = 'test'
+    }
+    const injector = new ReflectiveInjector(null, [])
+
+    expect(() => {
+      injector.get(Test)
+    }).toThrow('Can not found provide scope `test`!')
+  })
+
+  test('在查询链上找不到 scope 抛出异常', () => {
+    const scope = new Scope('test')
+
+    @Injectable({
+      provideIn: scope
+    })
+    class Test {
+      name = 'test'
+    }
+
+    @Injectable()
+    class Test2 {
+      constructor(public test: Test) {
+      }
+    }
+    const rootInjector = new ReflectiveInjector(null, [])
+    const injector = new ReflectiveInjector(rootInjector, [Test2])
+
+    expect(() => {
+      injector.get(Test2)
+    }).toThrow('No provide for `Test`!')
+  })
 })
 

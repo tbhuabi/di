@@ -10,7 +10,7 @@ export function makeInjectError(name: string) {
 
 export function madeProvideScopeError(name: string) {
   return function provideError(token: any) {
-    const error =  new Error(`can not found provide scope \`${stringify(token)}\`!`);
+    const error =  new Error(`Can not found provide scope \`${stringify(token)}\`!`);
     error.name = name;
     return error;
   }

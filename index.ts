@@ -11,7 +11,6 @@ import {
   SkipSelf
 } from '@tanbo/di';
 const scope = new Scope('scope')
-const rootInjector = new ReflectiveInjector(null, [])
 
 @Injectable({
   provideIn: scope
@@ -19,11 +18,14 @@ const rootInjector = new ReflectiveInjector(null, [])
 class Test {
   name = 'test'
 }
-const scopeInjector = new ReflectiveInjector(rootInjector, [], scope)
 
-const injector = new ReflectiveInjector(scopeInjector, [Test])
+@Injectable()
+class Test2 {
+  constructor(@Optional()public test: Test) {
+  }
+}
+const rootInjector = new ReflectiveInjector(null, [], scope)
+const injector = new ReflectiveInjector(rootInjector, [Test2])
 
-const instance1= scopeInjector.get(Test)
-const instance2 = injector.get(Test)
-
-console.log(injector)
+const instance = injector.get(Test2)
+console.log(instance)

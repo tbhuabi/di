@@ -70,6 +70,9 @@ export class ReflectiveInjector extends Injector {
             this.normalizedProviders.push(normalizedProvider)
             return this.getValue(token, notFoundValue, normalizedProvider);
           }
+          if (notFoundValue !== THROW_IF_NOT_FOUND) {
+            return notFoundValue;
+          }
           throw provideScopeError(normalizedProvider.scope)
         }
       }
@@ -116,7 +119,7 @@ export class ReflectiveInjector extends Injector {
         reflectiveValue = this.get(injectToken, tryValue, InjectFlags.Self);
       } else if (dep.visibility instanceof SkipSelf) {
         if (this.parentInjector) {
-          reflectiveValue = this.parentInjector.get(injectToken, tryValue, dep.optional ? InjectFlags.Optional : InjectFlags.Default);
+          reflectiveValue = this.parentInjector.get(injectToken, tryValue);
         } else {
           if (dep.optional) {
             if (notFoundValue === THROW_IF_NOT_FOUND) {
