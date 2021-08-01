@@ -551,5 +551,32 @@ describe('ReflectiveInjector Scope 注入', () => {
     expect(instance2).toBeInstanceOf(Test)
     expect(instance1).not.toBe(instance2)
   })
+  test('确保 scope 查找不会到 scope 之上', () => {
+    const scope = new Scope('scope')
+
+    const fn = jest.fn()
+
+    @Injectable({
+      provideIn: scope
+    })
+    class Test {
+      name = 'test'
+    }
+    const rootInjector = new ReflectiveInjector(null, [{
+      provide: Test,
+      useFactory() {
+        fn()
+        return new Test()
+      }
+    }])
+    const scopeInjector = new ReflectiveInjector(rootInjector, [], scope)
+
+    const injector = new ReflectiveInjector(scopeInjector, [])
+
+    injector.get(Test)
+
+    expect((scopeInjector as any).normalizedProviders.length).toBe(1)
+    expect(fn).not.toBeCalled()
+  })
 })
 
