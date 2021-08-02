@@ -9,7 +9,7 @@ import {
   Prop, Scope,
   ReflectiveInjector,
   Self,
-  SkipSelf
+  SkipSelf, Type
 } from '@tanbo/di';
 
 describe('ReflectiveInjector', () => {
@@ -416,6 +416,36 @@ describe('ReflectiveInjector', () => {
     expect(injector.parentInjector instanceof NullInjector).toBeTruthy()
     expect(() => injector.get(B)).toThrow()
     expect(fn).toBeCalled()
+  })
+
+  test('抽象类继承', () => {
+    abstract class Test {
+      abstract get(): string
+
+      abstract show(): boolean
+    }
+
+    @Injectable()
+    class Child extends Test {
+      get(): string {
+        return ''
+      }
+
+      show(): boolean {
+        return false;
+      }
+    }
+
+    const parentInjector = new ReflectiveInjector(null, [{
+      provide: Test,
+      useClass: Child
+    }])
+
+    const injector = new ReflectiveInjector(parentInjector, [])
+
+    const instance = injector.get(Test as Type<Test>)
+
+    expect(instance).toBeInstanceOf(Child)
   })
 })
 

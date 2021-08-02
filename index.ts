@@ -8,9 +8,10 @@ import {
   Prop, Provider, Scope,
   ReflectiveInjector,
   Self,
-  SkipSelf
+  SkipSelf, Type
 } from '@tanbo/di';
 const scope = new Scope('scope')
+const rootInjector = new ReflectiveInjector(null, [], scope)
 
 @Injectable({
   provideIn: scope
@@ -18,14 +19,8 @@ const scope = new Scope('scope')
 class Test {
   name = 'test'
 }
+const injector = new ReflectiveInjector(rootInjector, [])
 
-@Injectable()
-class Test2 {
-  constructor(@Optional()public test: Test) {
-  }
-}
-const rootInjector = new ReflectiveInjector(null, [], scope)
-const injector = new ReflectiveInjector(rootInjector, [Test2])
+const testInstance = injector.get(Test)
 
-const instance = injector.get(Test2)
-console.log(instance)
+console.log(testInstance)

@@ -7,7 +7,8 @@ import { ForwardRef } from './forward-ref';
 import { Type } from './type';
 import { InjectionToken } from './injection-token';
 import { NullInjector, THROW_IF_NOT_FOUND } from './null-injector';
-import { Scope } from './injectable';
+import { Injectable, Scope } from './injectable';
+import { getAnnotations } from './decorators';
 
 const reflectiveInjectorErrorFn = makeInjectError('ReflectiveInjectorError');
 const provideScopeError = madeProvideScopeError('ReflectiveInjectorError');
@@ -57,9 +58,10 @@ export class ReflectiveInjector extends Injector {
     }
 
     if (!(token instanceof InjectionToken)) {
-      const normalizedProvider = normalizeProvider(token)
-      if (normalizedProvider.scope) {
-        if (this.scope === normalizedProvider.scope) {
+      const scope = getAnnotations(token).getClassMetadata(Injectable)?.metadata.provideIn
+      if (scope) {
+        const normalizedProvider = normalizeProvider(token)
+        if (this.scope === scope) {
           this.normalizedProviders.push(normalizedProvider)
           return this.getValue(token, notFoundValue, normalizedProvider);
         }
