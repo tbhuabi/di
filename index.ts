@@ -10,17 +10,22 @@ import {
   Self,
   SkipSelf, Type
 } from '@tanbo/di';
-const scope = new Scope('scope')
-const rootInjector = new ReflectiveInjector(null, [], scope)
+@Injectable()
+class Test1 {
 
-@Injectable({
-  provideIn: scope
-})
-class Test {
-  name = 'test'
 }
-const injector = new ReflectiveInjector(rootInjector, [])
 
-const testInstance = injector.get(Test)
+@Injectable()
+class Test2 {
+  constructor(private test1: Test1) {
+  }
+}
+const value = {
+  name: 'name'
+}
+const injector = new ReflectiveInjector(null, [{
+  provide: Test2,
+  useValue: value
+}])
 
-console.log(testInstance)
+console.log(injector.get(Test2))

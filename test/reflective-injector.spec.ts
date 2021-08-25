@@ -141,6 +141,27 @@ describe('ReflectiveInjector', () => {
     expect(injector.get(B)).toBe(injector.get(B))
   })
 
+  test('useValue 不再分析依赖', () => {
+    @Injectable()
+    class Test1 {
+
+    }
+
+    @Injectable()
+    class Test2 {
+      constructor(private test1: Test1) {
+      }
+    }
+    const value = {
+      name: 'name'
+    }
+    const injector = new ReflectiveInjector(null, [{
+      provide: Test2,
+      useValue: value
+    }])
+
+    expect(injector.get(Test2)).toBe(value)
+  })
 
   test('依赖分析', () => {
     @Injectable()
