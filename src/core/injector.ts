@@ -1,10 +1,17 @@
 import { Type } from './type';
 import { InjectionToken } from './injection-token';
 
+/**
+ * 查找规则
+ */
 export enum InjectFlags {
+  /** 默认查找规则 */
   Default = 'Default',
+  /** 锁定当前容器 */
   Self = 'Self',
+  /** 跳过当前容器 */
   SkipSelf = 'SkipSelf',
+  /** 可选查找 */
   Optional = 'Optional'
 }
 
