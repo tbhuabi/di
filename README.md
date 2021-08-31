@@ -410,7 +410,7 @@ const injector = new ReflectiveInjector(parentInjector, [
   {
     provide: Example,
     useFactory(http: Http, user: User) {
-      // 这里 http 实例为 parentInjector 查找出来的，而不是当前的 injector 容器
+      // 这里 http 实例只在当前容器内查找
       return new MyExample(http, user)
     },
     deps: [
