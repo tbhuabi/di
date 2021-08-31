@@ -2,7 +2,7 @@ import { Provider } from './provider';
 import { InjectFlags, Injector } from './injector';
 import { NormalizedProvider, normalizeProvider, ReflectiveDependency } from './reflective-provider';
 import { Self, SkipSelf } from './metadata';
-import { madeProvideScopeError, makeInjectError } from './utils/inject-error';
+import { makeProvideScopeError, makeInjectError } from './utils/inject-error';
 import { ForwardRef } from './forward-ref';
 import { Type } from './type';
 import { InjectionToken } from './injection-token';
@@ -11,7 +11,7 @@ import { Injectable, Scope } from './injectable';
 import { getAnnotations } from './decorators';
 
 const reflectiveInjectorErrorFn = makeInjectError('ReflectiveInjectorError');
-const provideScopeError = madeProvideScopeError('ReflectiveInjectorError');
+const provideScopeError = makeProvideScopeError('ReflectiveInjectorError');
 
 /**
  * 反射注入器
