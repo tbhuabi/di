@@ -60,13 +60,14 @@ export function makeClassDecorator(token: any, metadata: any): ClassDecorator {
  * 获取类注解的工具函数
  */
 export function getAnnotations(target: any): Annotations {
-  if (!target.hasOwnProperty('__annotaions__')) {
+  const key = '__annotations__'
+  if (!target[key]) {
     const annotations = new Annotations();
-    Reflect.defineProperty(target, '__annotations__', {
+    Reflect.defineProperty(target, key, {
       get() {
         return annotations
       }
     })
   }
-  return (target as any).__annotations__ as Annotations;
+  return target[key] as Annotations;
 }

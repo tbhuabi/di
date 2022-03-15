@@ -23,9 +23,6 @@ class Test2 {
 const value = {
   name: 'name'
 }
-const injector = new ReflectiveInjector(null, [{
-  provide: Test2,
-  useValue: value
-}])
+const injector = new ReflectiveInjector(null, [Test1, Test2])
 
 console.log(injector.get(Test2))
