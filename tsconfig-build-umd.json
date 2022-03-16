@@ -2,7 +2,7 @@
   "compilerOptions": {
     "declaration": true,
     "target": "es5",
-    "module": "umd",
+    "module": "commonjs",
     "moduleResolution": "node",
     "sourceMap": false,
     "emitDecoratorMetadata": true,
@@ -16,7 +16,7 @@
     "downlevelIteration": true,
     "esModuleInterop": true,
     "baseUrl": "./",
-    "outDir": "package/bundles/umd",
+    "outDir": "package/bundles/commonjs",
     "paths": {
       "@tanbo/di": [
         "src/public-api.ts"

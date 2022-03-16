@@ -1,10 +1,10 @@
 {
   "name": "@tanbo/di",
-  "version": "1.0.4",
+  "version": "1.0.6",
   "description": "A dependency injection Library",
-  "main": "./bundles/umd/public-api.js",
+  "main": "./bundles/commonjs/public-api.js",
   "module": "./bundles/esm/public-api.js",
-  "typings": "./bundles/esm/public-api.d.ts",
+  "types": "./bundles/esm/public-api.d.ts",
   "license": "MIT",
   "author": {
     "name": "tanbo",
