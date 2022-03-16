@@ -1,4 +1,4 @@
-import { Type } from './type';
+import { AbstractType, Type } from './type';
 import { InjectionToken } from './injection-token';
 
 /**
@@ -21,7 +21,7 @@ export enum InjectFlags {
 export abstract class Injector {
   abstract parentInjector: Injector;
 
-  abstract get<T>(token: Type<T> | InjectionToken<T>, notFoundValue?: T, flags?: InjectFlags): T
+  abstract get<T>(token: Type<T> | AbstractType<T> | InjectionToken<T>, notFoundValue?: T, flags?: InjectFlags): T
 }
 
 

@@ -4,7 +4,7 @@ import { NormalizedProvider, normalizeProvider, ReflectiveDependency } from './r
 import { Self, SkipSelf } from './metadata';
 import { makeProvideScopeError, makeInjectError } from './utils/inject-error';
 import { ForwardRef } from './forward-ref';
-import { Type } from './type';
+import { AbstractType, Type } from './type';
 import { InjectionToken } from './injection-token';
 import { NullInjector, THROW_IF_NOT_FOUND } from './null-injector';
 import { Injectable, Scope } from './injectable';
@@ -18,7 +18,7 @@ const provideScopeError = makeProvideScopeError('ReflectiveInjectorError');
  */
 export class ReflectiveInjector extends Injector {
   private readonly normalizedProviders: NormalizedProvider[];
-  private readonly recordValues = new Map<Type<any> | InjectionToken<any>, any>();
+  private readonly recordValues = new Map<Type<any> | AbstractType<any> | InjectionToken<any>, any>();
 
   constructor(public parentInjector: Injector,
               private staticProviders: Provider[],
@@ -35,7 +35,7 @@ export class ReflectiveInjector extends Injector {
    * @param notFoundValue 如未查找到的返回值
    * @param flags 查询规则
    */
-  get<T>(token: Type<T> | InjectionToken<T>, notFoundValue: T = THROW_IF_NOT_FOUND as T, flags?: InjectFlags): T {
+  get<T>(token: Type<T> | AbstractType<T> | InjectionToken<T>, notFoundValue: T = THROW_IF_NOT_FOUND as T, flags?: InjectFlags): T {
     flags = flags || InjectFlags.Default;
     if (flags === InjectFlags.SkipSelf) {
       if (this.parentInjector) {
@@ -95,7 +95,7 @@ export class ReflectiveInjector extends Injector {
     return notFoundValue;
   }
 
-  private getValue<T>(token: Type<T> | InjectionToken<T>, notFoundValue: T = THROW_IF_NOT_FOUND as T, normalizedProvider: NormalizedProvider) {
+  private getValue<T>(token: Type<T> | AbstractType<T> | InjectionToken<T>, notFoundValue: T = THROW_IF_NOT_FOUND as T, normalizedProvider: NormalizedProvider) {
     const {generateFactory, deps} = normalizedProvider;
     const factory = generateFactory(this, (token: Type<any>, value: any) => {
       this.recordValues.set(token, value)
