@@ -20,10 +20,11 @@ export function makeParamDecorator(token: any, metadata): ParameterDecorator {
 /**
  * 创建属性装饰器的工厂函数
  */
-export function makePropertyDecorator(token: any, contextCallback: PropertyDecoratorContextCallback): PropertyDecorator {
+export function makePropertyDecorator(token: any, injectToken: any, contextCallback: PropertyDecoratorContextCallback): PropertyDecorator {
   return function (target, propertyKey) {
     const annotations = getAnnotations(target.constructor);
     annotations.pushPropMetadata(token, {
+      injectToken: injectToken || Reflect.getMetadata('design:type', target, propertyKey),
       propertyKey,
       contextCallback
     });

@@ -1,5 +1,5 @@
 import { makeParamDecorator, makePropertyDecorator } from './decorators';
-import { Type } from './type';
+import { AbstractType, Type } from './type';
 import { InjectFlags, Injector } from './injector';
 import { InjectionToken } from './injection-token';
 import { ForwardRef } from './forward-ref';
@@ -81,14 +81,16 @@ export interface Prop {
 }
 
 export interface PropDecorator {
-  <T>(token: Type<T> | InjectionToken<T> | ForwardRef<T>, notFoundValue?: T, flags?: InjectFlags): PropertyDecorator;
+  <T>(token?: Type<T> | AbstractType<T> | InjectionToken<T> | ForwardRef<T>,
+      notFoundValue?: T,
+      flags?: InjectFlags): PropertyDecorator;
 
   new(token: any): Prop;
 }
 
-export const Prop: PropDecorator = function PropDecorator<T>(token: Type<T> | InjectionToken<T>, notFoundValue: T = THROW_IF_NOT_FOUND as T, flags?: InjectFlags): PropertyDecorator {
+export const Prop: PropDecorator = function PropDecorator<T>(token?: Type<T> | AbstractType<T> | InjectionToken<T> | ForwardRef<T>, notFoundValue: T = THROW_IF_NOT_FOUND as T, flags?: InjectFlags): PropertyDecorator {
   if (!(this instanceof Prop)) {
-    return makePropertyDecorator(Prop, function (instance: any, propertyName: string, injector: Injector) {
+    return makePropertyDecorator(Prop, token, function (instance: any, propertyName: string, token: any, injector: Injector) {
       instance[propertyName] = injector.get(token instanceof ForwardRef ? token.getRef() : token, notFoundValue, flags);
     });
   }

@@ -90,14 +90,14 @@ function normalizeClassProviderFactory(provider: ClassProvider): NormalizedProvi
           }
         }
         const instance = new provider.useClass(...args);
+        cacheFn(provider.provide, instance);
         const propMetadataKeys = getAnnotations(provider.useClass).getPropMetadataKeys();
         propMetadataKeys.forEach(key => {
           const propsMetadata = getAnnotations(provider.useClass).getPropMetadata(key) || [];
           propsMetadata.forEach(item => {
-            item.contextCallback(instance, item.propertyKey, injector);
+            item.contextCallback(instance, item.propertyKey, item.injectToken, injector);
           })
         })
-        cacheFn(provider.provide, instance);
         if (provider.provide !== provider.useClass) {
           cacheFn(provider.useClass, instance);
         }

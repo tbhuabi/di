@@ -13,10 +13,11 @@ export interface ParamAnnotation {
 }
 
 export interface PropertyDecoratorContextCallback {
-  (instance: any, propertyName: string | symbol, injector: Injector): void;
+  (instance: any, propertyName: string | symbol, token: any, injector: Injector): void;
 }
 
 export interface PropertyAnnotation {
+  injectToken: any;
   propertyKey: string | symbol;
   contextCallback: PropertyDecoratorContextCallback;
 }
