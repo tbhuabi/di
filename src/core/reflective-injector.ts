@@ -17,12 +17,12 @@ const provideScopeError = makeProvideScopeError('ReflectiveInjectorError');
  * 反射注入器
  */
 export class ReflectiveInjector extends Injector {
-  private readonly normalizedProviders: NormalizedProvider[];
-  private readonly recordValues = new Map<Type<any> | AbstractType<any> | InjectionToken<any>, any>();
+  protected normalizedProviders: NormalizedProvider[];
+  protected recordValues = new Map<Type<any> | AbstractType<any> | InjectionToken<any>, any>();
 
   constructor(public parentInjector: Injector,
-              private staticProviders: Provider[],
-              private scope?: Scope) {
+              protected staticProviders: Provider[],
+              protected scope?: Scope) {
     super()
     this.normalizedProviders = staticProviders.map(provide => {
       return normalizeProvider(provide)
