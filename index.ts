@@ -11,18 +11,20 @@ import {
   SkipSelf, Type
 } from '@tanbo/di';
 
-abstract class Test {
-  name: string
+@Injectable()
+class Test0 {
+  name = 'test0'
 }
 @Injectable()
 class Test1 {
-
+  constructor(@Optional() private test0: Test0) {
+  }
 }
 
 @Injectable()
 class Test2 {
-  @Prop()
-  private test: Test1
+  constructor(private child: Test1) {
+  }
 }
 const value = {
   name: 'name'

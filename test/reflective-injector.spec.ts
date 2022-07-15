@@ -705,5 +705,28 @@ describe('ReflectiveInjector Scope 注入', () => {
       injector.get(Test2)
     }).toThrow('No provide for `Test`!')
   })
+
+  test('可选注入不存在时，注入 null', () => {
+
+    @Injectable()
+    class Test0 {
+      name = 'test0'
+    }
+    @Injectable()
+    class Test1 {
+      constructor(@Optional() public test0: Test0) {
+      }
+    }
+
+    @Injectable()
+    class Test2 {
+      constructor(public child: Test1) {
+      }
+    }
+
+    const injector = new ReflectiveInjector(null, [Test1, Test2])
+    const test2 = injector.get(Test2)
+    expect(test2.child.test0).toBeNull()
+  })
 })
 

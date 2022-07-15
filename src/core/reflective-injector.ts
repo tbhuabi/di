@@ -53,7 +53,7 @@ export class ReflectiveInjector extends Injector {
     for (let i = 0; i < this.normalizedProviders.length; i++) {
       const normalizedProvider = this.normalizedProviders[i];
       if (normalizedProvider.provide === token) {
-        return this.getValue(token, notFoundValue, normalizedProvider);
+        return this.getValue(token, THROW_IF_NOT_FOUND, normalizedProvider);
       }
     }
 
@@ -63,14 +63,14 @@ export class ReflectiveInjector extends Injector {
         const normalizedProvider = normalizeProvider(token)
         if (this.scope === scope) {
           this.normalizedProviders.push(normalizedProvider)
-          return this.getValue(token, notFoundValue, normalizedProvider);
+          return this.getValue(token, THROW_IF_NOT_FOUND, normalizedProvider);
         }
         const parentInjector = this.parentInjector;
 
         if (!parentInjector || parentInjector instanceof NullInjector) {
           if (normalizedProvider.scope === 'root') {
             this.normalizedProviders.push(normalizedProvider)
-            return this.getValue(token, notFoundValue, normalizedProvider);
+            return this.getValue(token, THROW_IF_NOT_FOUND, normalizedProvider);
           }
           if (notFoundValue !== THROW_IF_NOT_FOUND) {
             return notFoundValue;
