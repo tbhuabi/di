@@ -1,3 +1,5 @@
+import 'reflect-metadata'
+
 export * from './core/utils/_api';
 
 export * from './core/annotations';
