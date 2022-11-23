@@ -12,22 +12,26 @@ import {
 } from '@tanbo/di';
 
 @Injectable()
-class Test0 {
-  name = 'test0'
-}
-@Injectable()
-class Test1 {
-  constructor(@Optional() private test0: Test0) {
-  }
+class Base {
 }
 
 @Injectable()
-class Test2 {
-  constructor(private child: Test1) {
+class Extends {
+  constructor() {
+    console.log('-------')
   }
 }
-const value = {
-  name: 'name'
-}
-const injector = new ReflectiveInjector(null, [Test1, Test2])
-console.log(injector.get(Test2))
+
+const injector = new ReflectiveInjector(null, [{
+  provide: Base,
+  useClass: Extends
+}])
+
+const childInjector = new ReflectiveInjector(injector, [{
+  provide: Base,
+  useClass: Extends
+}])
+
+const instance1 = injector.get(Base)
+const instance2 = childInjector.get(Base)
+console.log(instance1 === instance2)

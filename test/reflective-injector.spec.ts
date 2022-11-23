@@ -76,7 +76,7 @@ describe('ReflectiveInjector', () => {
     expect(injector.get(A) instanceof B).toBeTruthy()
   })
 
-  test('useClass 只实例化一次顺序获取', () => {
+  test('useExisting 共享实例', () => {
     @Injectable()
     class A {
 
@@ -92,7 +92,7 @@ describe('ReflectiveInjector', () => {
 
     const injector = new ReflectiveInjector(null, [B, {
       provide: A,
-      useClass: B
+      useExisting: B
     }])
 
     injector.get(B);
@@ -100,7 +100,55 @@ describe('ReflectiveInjector', () => {
 
     expect(i).toBe(1)
   })
-  test('useClass 只实例化一次倒序获取', () => {
+  test('useExisting 共享实例', () => {
+    @Injectable()
+    class A {
+
+    }
+    let i = 0;
+
+    @Injectable()
+    class B {
+      constructor() {
+        i++
+      }
+    }
+
+    const injector = new ReflectiveInjector(null, [B, {
+      provide: A,
+      useExisting: B
+    }])
+
+    injector.get(A);
+    injector.get(B);
+
+    expect(i).toBe(1)
+  })
+  test('useClass 分别产生实例', () => {
+    @Injectable()
+    class A {
+
+    }
+    let i = 0;
+
+    @Injectable()
+    class B {
+      constructor() {
+        i++
+      }
+    }
+
+    const injector = new ReflectiveInjector(null, [B, {
+      provide: A,
+      useClass: B
+    }])
+
+    injector.get(B);
+    injector.get(A);
+
+    expect(i).toBe(2)
+  })
+  test('useClass 分别产生实例', () => {
     @Injectable()
     class A {
 
@@ -122,7 +170,65 @@ describe('ReflectiveInjector', () => {
     injector.get(A);
     injector.get(B);
 
-    expect(i).toBe(1)
+    expect(i).toBe(2)
+  })
+  test('useClass 获取多次只产生一个实例', () => {
+    @Injectable()
+    class A {
+
+    }
+    let i = 0;
+
+    @Injectable()
+    class B {
+      constructor() {
+        i++
+      }
+    }
+
+    const injector = new ReflectiveInjector(null, [B, {
+      provide: A,
+      useClass: B
+    }])
+
+    injector.get(B);
+    injector.get(A);
+    injector.get(B);
+    injector.get(A);
+
+    expect(injector.get(A) === injector.get(A)).toBeTruthy()
+    expect(injector.get(B) === injector.get(B)).toBeTruthy()
+    expect(injector.get(A) === injector.get(B)).toBeFalsy()
+    expect(i).toBe(2)
+  })
+  test('useClass 获取多次只产生一个实例', () => {
+    @Injectable()
+    class A {
+
+    }
+    let i = 0;
+
+    @Injectable()
+    class B {
+      constructor() {
+        i++
+      }
+    }
+
+    const injector = new ReflectiveInjector(null, [B, {
+      provide: A,
+      useClass: B
+    }])
+
+    injector.get(A);
+    injector.get(B);
+    injector.get(A);
+    injector.get(B);
+
+    expect(injector.get(A) === injector.get(A)).toBeTruthy()
+    expect(injector.get(B) === injector.get(B)).toBeTruthy()
+    expect(injector.get(A) === injector.get(B)).toBeFalsy()
+    expect(i).toBe(2)
   })
   test('单例', () => {
     @Injectable()

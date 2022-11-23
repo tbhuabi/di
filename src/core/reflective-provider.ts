@@ -83,12 +83,6 @@ function normalizeClassProviderFactory(provider: ClassProvider): NormalizedProvi
     deps,
     generateFactory(injector, cacheFn) {
       return function (...args: any[]) {
-        if (provider.provide !== provider.useClass) {
-          const cachedInstance = injector.get(provider.useClass, null, InjectFlags.Optional);
-          if (cachedInstance) {
-            return cachedInstance;
-          }
-        }
         const instance = new provider.useClass(...args);
         cacheFn(provider.provide, instance);
         const propMetadataKeys = getAnnotations(provider.useClass).getPropMetadataKeys();
@@ -98,9 +92,6 @@ function normalizeClassProviderFactory(provider: ClassProvider): NormalizedProvi
             item.contextCallback(instance, item.propertyKey, item.injectToken, injector);
           })
         })
-        if (provider.provide !== provider.useClass) {
-          cacheFn(provider.useClass, instance);
-        }
         return instance;
       }
     }
